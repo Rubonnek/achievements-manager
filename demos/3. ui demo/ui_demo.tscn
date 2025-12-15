@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://bq5obm7flk5ul"]
+
+[ext_resource type="Script" path="res://demos/3. ui demo/ui_demo.gd" id="1_5u2ar"]
+[ext_resource type="PackedScene" uid="uid://dx26a1i3jcjw1" path="res://demos/3. ui demo/achievements_notification_demo_ui/achievements_notification_demo_ui.tscn" id="1_8jooq"]
+
+[node name="AchievementsNotificationUIDemoNode" type="Node" node_paths=PackedStringArray("demo_notification_label", "achievements_notification_ui")]
+script = ExtResource("1_5u2ar")
+demo_notification_label = NodePath("DemoInstructionsAndNotificationVBoxContainer/DemoNotificationLabel")
+achievements_notification_ui = NodePath("AchievementsUIFlowContainer")
+
+[node name="AchievementsUIFlowContainer" parent="." instance=ExtResource("1_8jooq")]
+
+[node name="DemoInstructionsAndNotificationVBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InstructionsLabel" type="Label" parent="DemoInstructionsAndNotificationVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Press Enter to unlock or progress an achievement.
+
+Press Space to unlock all achievements at once."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DemoNotificationLabel" type="Label" parent="DemoInstructionsAndNotificationVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_alignment = 1
+vertical_alignment = 1

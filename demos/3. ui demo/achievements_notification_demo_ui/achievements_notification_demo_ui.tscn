@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dx26a1i3jcjw1"]
+
+[ext_resource type="Script" path="res://demos/3. ui demo/achievements_notification_demo_ui/achievements_notification_demo_ui.gd" id="1_xlhnd"]
+[ext_resource type="Shader" path="res://demos/3. ui demo/achievements_notification_demo_ui/achievement_notification_button.gdshader" id="2_1502r"]
+
+[node name="AchievementsNotificationUI" type="FlowContainer" groups=["achievements_notification_ui"]]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 2
+vertical = true
+script = ExtResource("1_xlhnd")
+achievement_shader = ExtResource("2_1502r")

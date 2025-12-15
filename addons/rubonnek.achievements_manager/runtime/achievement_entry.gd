@@ -1,0 +1,350 @@
+#============================================================================
+#  achievement_entry.gd                                                     |
+#============================================================================
+#                         This file is part of:                             |
+#                       ACHIEVEMENTS MANAGER                                |
+#============================================================================
+# Copyright (c) 2025 Wilson Enrique Alvarez Torres                          |
+#                                                                           |
+# Permission is hereby granted, free of charge, to any person obtaining     |
+# a copy of this software and associated documentation files (the           |
+# "Software"), to deal in the Software without restriction, including       |
+# without limitation the rights to use, copy, modify, merge, publish,       |
+# distribute, sublicense, and/or sell copies of the Software, and to        |
+# permit persons to whom the Software is furnished to do so, subject to     |
+# the following conditions:                                                 |
+#                                                                           |
+# The above copyright notice and this permission notice shall be            |
+# included in all copies or substantial portions of the Software.           |
+#                                                                           |
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,           |
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF        |
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.    |
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY      |
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,      |
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         |
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    |
+#============================================================================
+
+extends RefCounted
+## High-level wrapper for accessing and modifying achievement data.
+##
+## This class provides a convenient object-oriented interface for working with individual achievements
+## in the [AchievementsManager]. It wraps the internal dictionary storage with type-safe getters and
+## setters, while maintaining direct reference to the underlying data - meaning all changes are
+## immediately reflected in the manager's storage without additional synchronization.[br]
+## [br]
+## [b]Key Features:[/b][br]
+## - Direct manipulation of achievement properties (name, description, icon, etc.)[br]
+## - Instant unlocking with [method unlock][br]
+## - Custom metadata storage for extended properties (including progress tracking)[br]
+## - Weak reference to parent manager for signal emission[br]
+## [br]
+## [b]Usage:[/b][br]
+## [codeblock]
+## # Obtain an entry from the manager
+## var entry = manager.get_achievement_entry(achievement_id)
+##
+## # Read properties
+## print(entry.get_name())
+##
+## # Modify properties
+## entry.set_name("Updated Name")
+##
+## # Custom metadata (including progress tracking)
+## entry.set_metadata("progress", 5)
+## entry.set_metadata("category", "combat")
+## var progress = entry.get_metadata("progress", 0)
+## var category = entry.get_metadata("category")
+## [/codeblock]
+class_name AchievementEntry
+
+## Emitted when [method set_unlocked] is called. Useful for notifying UI or other systems that achievement data has changed.
+signal achievement_unlocked(p_achievement_entry : AchievementEntry)
+
+## Emitted when [method set_updated] is called. Useful for notifying UI or other systems that achievement data has changed.
+signal achievement_updated(p_achievement_entry : AchievementEntry)
+
+# Enum representing the field indices for achievement data storage.[br]
+# Used by [AchievementsManager] to efficiently store and retrieve achievement properties.[br]
+# [b]Note:[/b] ID is not stored in the dictionary - it's the array index in AchievementsManager.
+enum _key {
+	NAME,        # Display name of the achievement
+	DESCRIPTION, # Description text explaining how to unlock
+	HIDDEN,      # Whether the achievement should be hidden until unlocked
+	UNLOCKED,    # Whether the achievement is unlocked (runtime state)
+	STRING_ID,   # String identifier for interfacing with external achievement systems
+	ICON,        # Icon texture for the achievement
+	METADATA     # Additional arbitrary metadata storage
+}
+
+# Reference to the internal dictionary storing achievement data.
+var _data: Dictionary
+
+# The achievement ID (array index in AchievementsManager).
+var _id: int
+
+# Weak reference to the achievements manager for signal emission.
+var _manager_ref: WeakRef
+
+
+# Initializes a new achievement entry.[br]
+# [br]
+# [b]For internal use by AchievementsManager.[/b] Use [method AchievementsManager.get_entry]
+# to obtain an [AchievementEntry] instance.[br]
+# [br]
+# [param p_id]: The achievement ID (array index)[br]
+# [param p_data]: Dictionary reference containing achievement data indexed by [enum _key] values[br]
+# [param p_manager]: Reference to the AchievementsManager instance
+func _init(p_id: int, p_data: Dictionary, p_manager: AchievementsManager = null) -> void:
+	_id = p_id
+	_data = p_data
+	if is_instance_valid(p_manager):
+		_manager_ref = weakref(p_manager)
+	else:
+		assert(false, "AchievementEntry: should not be instantiated without an associated AchievementsManager")
+
+
+## Gets the unique identifier for this achievement.[br]
+## [br]
+## [b]Returns:[/b] The achievement ID (array index)
+func get_id() -> int:
+	return _id
+
+
+## Gets the display name of the achievement.[br]
+## [br]
+## [b]Returns:[/b] The achievement name
+func get_name() -> String:
+	var name: String = _data.get(_key.NAME, "")
+	return name
+
+
+## Sets the display name of the achievement.[br]
+## [br]
+## [param value]: The new achievement name
+func set_name(value: String) -> void:
+	_data[_key.NAME] = value
+
+
+## Gets the description explaining how to unlock the achievement.[br]
+## [br]
+## [b]Returns:[/b] The achievement description
+func get_description() -> String:
+	var description: String = _data.get(_key.DESCRIPTION, "")
+	return description
+
+
+## Sets the description explaining how to unlock the achievement.[br]
+## [br]
+## [param value]: The new achievement description
+func set_description(value: String) -> void:
+	_data[_key.DESCRIPTION] = value
+
+
+## Gets whether this achievement should be hidden until unlocked.[br>
+## [br]
+## [b]Returns:[/b] [code]true[/code] if hidden, [code]false[/code] otherwise
+func get_hidden() -> bool:
+	var is_hidden: bool = _data.get(_key.HIDDEN, false)
+	return is_hidden
+
+
+## Sets whether this achievement should be hidden until unlocked.[br]
+## [br]
+## [param value]: [code]true[/code] to hide, [code]false[/code] to show
+func set_hidden(value: bool) -> void:
+	_data[_key.HIDDEN] = value
+
+
+## Gets whether this achievement is currently unlocked.[br]
+## [br]
+## [b]Returns:[/b] [code]true[/code] if unlocked, [code]false[/code] otherwise
+func is_unlocked() -> bool:
+	var unlocked: bool = _data.get(_key.UNLOCKED, false)
+	return unlocked
+
+
+## Sets whether this achievement is currently unlocked.[br]
+## [br]
+## Emits [signal achievement_unlocked] when unlocking an achievement.[br]
+## [br]
+## [param value]: [code]true[/code] to unlock, [code]false[/code] to lock
+func set_unlocked(value: bool) -> void:
+	if value:
+		_data[_key.UNLOCKED] = true
+		achievement_unlocked.emit(self)
+		__send_entry_to_manager_viewer()
+	else:
+		var _success: bool = _data.erase(_key.UNLOCKED)
+		__send_entry_to_manager_viewer()
+
+
+## Gets the string identifier for this achievement.[br]
+## [br]
+## Used for interfacing with external achievement systems (e.g., Steam, Epic Games).[br]
+## [br]
+## [b]Returns:[/b] The achievement string ID
+func get_string_id() -> String:
+	var string_id: String = _data.get(_key.STRING_ID, "")
+	return string_id
+
+
+## Sets the string identifier for this achievement.[br]
+## [br]
+## Used for interfacing with external achievement systems (e.g., Steam, Epic Games).[br]
+## [br]
+## [param value]: The new achievement string ID
+func set_string_id(value: String) -> void:
+	_data[_key.STRING_ID] = value
+
+
+## Gets the icon texture for this achievement.[br]
+## [br]
+## [b]Returns:[/b] The achievement icon texture, or [code]null[/code] if not set
+func get_icon() -> Texture2D:
+	var icon: Texture2D = _data.get(_key.ICON, null)
+	return icon
+
+
+## Sets the icon texture for this achievement.[br]
+## [br]
+## [param value]: The new achievement icon texture
+func set_icon(value: Texture2D) -> void:
+	_data[_key.ICON] = value
+
+
+## Sets a metadata value for this achievement.[br]
+## [br]
+## Metadata can store arbitrary key-value pairs for custom achievement data.[br]
+## [br]
+## [param p_key]: The metadata key[br]
+## [param p_value]: The metadata value
+func set_metadata(p_key: Variant, p_value: Variant) -> void:
+	var metadata: Dictionary = _data.get(_key.METADATA, {})
+	metadata[p_key] = p_value
+	if not _data.has(_key.METADATA):
+		_data[_key.METADATA] = metadata
+
+
+## Gets a metadata value from this achievement.[br]
+## [br]
+## [param p_key]: The metadata key to retrieve[br]
+## [param p_default_value]: The default value to return if the key doesn't exist[br]
+## [br]
+## [b]Returns:[/b] The metadata value, or the default value if not found
+func get_metadata(p_key: Variant, p_default_value: Variant = null) -> Variant:
+	var metadata: Dictionary = _data.get(_key.METADATA, {})
+	var value: Variant = metadata.get(p_key, p_default_value)
+	return value
+
+
+## Gets a reference to the internal metadata dictionary.[br]
+## [br]
+## [b]Returns:[/b] The metadata dictionary, or empty dictionary if not set[br]
+## [br]
+## [color=yellow]Warning:[/color] Returns a reference to the internal dictionary. Modifying it will modify the metadata directly.
+func get_metadata_data() -> Dictionary:
+	var metadata: Dictionary = _data.get(_key.METADATA, {})
+	if not _data.has(_key.METADATA):
+		# Store a reference so external modifications update the entry automatically
+		_data[_key.METADATA] = metadata
+	return metadata
+
+
+## Checks if this achievement has any metadata.[br]
+## [br]
+## [b]Returns:[/b] [code]true[/code] if metadata exists and is not empty, [code]false[/code] otherwise
+func has_metadata() -> bool:
+	var metadata: Dictionary = _data.get(_key.METADATA, {})
+	var has_data: bool = not metadata.is_empty()
+	return has_data
+
+
+## Gets the weak reference to the achievements manager.[br]
+## [br]
+## [b]Returns:[/b] WeakRef to the manager, or [code]null[/code] if not set
+func get_manager_ref() -> WeakRef:
+	return _manager_ref
+
+
+## Sets the weak reference to the achievements manager.[br]
+## [br]
+## [param p_manager]: Reference to the AchievementsManager instance
+func set_manager_ref(p_manager: AchievementsManager) -> void:
+	if p_manager:
+		_manager_ref = weakref(p_manager)
+	else:
+		_manager_ref = null
+
+
+## Gets the achievements manager instance if still valid.[br]
+## [br]
+## [b]Returns:[/b] The AchievementsManager instance, or [code]null[/code] if invalid
+func get_manager() -> AchievementsManager:
+	if _manager_ref:
+		var manager: AchievementsManager = _manager_ref.get_ref()
+		return manager
+	return null
+
+
+## Unlocks this achievement immediately.[br]
+## [br]
+## If the achievement is already unlocked, this method does nothing.
+## Emits [signal achievement_unlocked].
+func unlock() -> void:
+	if is_unlocked():
+		return
+
+	set_unlocked(true)
+
+
+## Converts this achievement entry to a dictionary indexed by [enum _key] values.[br]
+## [br]
+## [b]Returns:[/b] Dictionary containing all achievement data[br]
+## [br]
+## [color=yellow]Warning:[/color] Returns a reference to the internal dictionary. Modifying it will modify the data accessed by the AchievementEntry instance and the AchievementsManager instance as well.
+func get_data() -> Dictionary:
+	return _data
+
+
+## Utility function for emitting [signal achievement_updated] when an achievement's data is updated.[br]
+## [br]
+## This is useful for notifying UI systems or other listeners that the achievement should be refreshed,
+## even if the progress or unlock state hasn't changed. For example, when updating the name, description,
+## icon, or metadata.
+func set_updated() -> void:
+	achievement_updated.emit(self)
+
+
+# Sends this achievement entry data to the debugger viewer for visualization.[br]
+# [br]
+# [b]For internal use.[/b] This is called automatically when achievement data changes.
+func __send_entry_to_manager_viewer() -> void:
+	if EngineDebugger.is_active():
+		var manager: AchievementsManager = get_manager()
+		if not is_instance_valid(manager):
+			return
+
+		# Duplicate the achievement data to avoid modifying the runtime data
+		var duplicated_achievement_data: Dictionary = _data.duplicate(true)
+
+		# Stringify metadata keys and values where needed for display
+		var metadata: Dictionary = _data.get(_key.METADATA, {})
+		if not metadata.is_empty():
+			var stringified_metadata: Dictionary = {}
+			for key: Variant in metadata:
+				var value: Variant = metadata[key]
+				if key is Callable or key is Object:
+					stringified_metadata[str(key)] = str(value)
+				else:
+					stringified_metadata[key] = str(value)
+			# Replace the source metadata with the stringified version that can be displayed remotely:
+			duplicated_achievement_data[_key.METADATA] = stringified_metadata
+
+		var achievements_manager_id: int = manager.get_instance_id()
+		EngineDebugger.send_message("achievements_manager:sync_entry", [achievements_manager_id, _id, duplicated_achievement_data])
+
+
+func _to_string() -> String:
+	return "<AchievementEntry#%d>" % get_id()

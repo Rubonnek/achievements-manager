@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8xqy4vw0rhxk"]
+
+[ext_resource type="Script" path="res://demos/2. progress achievement/progress_achievement.gd" id="1_progress"]
+
+[node name="ProgressAchievement" type="Node" node_paths=PackedStringArray("notification_label")]
+script = ExtResource("1_progress")
+notification_label = NodePath("ProgressAchievementVBoxContainer/AchievementNotificationLabel")
+
+[node name="ProgressAchievementVBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InstructionsLabel" type="Label" parent="ProgressAchievementVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Press Space to progress the achievement."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AchievementNotificationLabel" type="Label" parent="ProgressAchievementVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_alignment = 1
+vertical_alignment = 1

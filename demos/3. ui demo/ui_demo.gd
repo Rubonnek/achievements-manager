@@ -13,8 +13,8 @@ func _ready() -> void:
 	var first_steps_entry : AchievementEntry = achievements_manager.add_achievement(
 		"First Steps",
 		"Complete your first action",
-		false,
 		"first_steps",
+		false,
 		null,
 		{"target": 1, "progress": 0}
 	)
@@ -22,8 +22,8 @@ func _ready() -> void:
 	var second_steps_entry : AchievementEntry = achievements_manager.add_achievement(
 		"Second Steps",
 		"Complete your second action",
-		false,
 		"second_steps",
+		false,
 		null,
 		{"target": 1, "progress": 0}
 	)
@@ -31,8 +31,8 @@ func _ready() -> void:
 	var explorer_entry : AchievementEntry = achievements_manager.add_achievement(
 		"Explorer",
 		"Discover 10 locations",
-		false,
 		"explorer",
+		false,
 		null,
 		{"target": 10, "progress": 0}
 	)
@@ -40,8 +40,8 @@ func _ready() -> void:
 	var hidden_treasure_entry : AchievementEntry = achievements_manager.add_achievement(
 		"Hidden Treasure",
 		"Find the secret treasure",
-		true,
 		"hidden_treasure",
+		true,
 		null,
 		{"target": 1, "progress": 0}
 	)
@@ -49,8 +49,8 @@ func _ready() -> void:
 	var collector_entry : AchievementEntry = achievements_manager.add_achievement(
 		"Collector",
 		"Collect 100 items",
-		false,
 		"collector",
+		false,
 		null,
 		{"target": 100, "progress": 0}
 	)

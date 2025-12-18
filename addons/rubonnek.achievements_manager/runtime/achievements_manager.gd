@@ -54,8 +54,8 @@ class_name AchievementsManager
 ## var entry = manager.add_achievement(
 ##     "First Steps",
 ##     "Complete the tutorial",
-##     false,  # not hidden
 ##     "",     # string_id
+##     false,  # not hidden
 ##     null,   # icon
 ##     metadata
 ## )
@@ -115,7 +115,7 @@ func __is_valid_id(p_id: int) -> bool:
 ## [param p_metadata]: Additional metadata dictionary (optional)[br]
 ## [br]
 ## [b]Returns:[/b] The AchievementEntry for the newly added achievement
-func add_achievement(p_name: String = "", p_description: String = "", p_hidden: bool = false, p_string_id: String = "", p_icon: Texture2D = null, p_metadata: Dictionary = {}) -> AchievementEntry:
+func add_achievement(p_name: String = "", p_description: String = "", p_string_id: String = "", p_hidden: bool = false, p_icon: Texture2D = null, p_metadata: Dictionary = {}) -> AchievementEntry:
 
 	# Only store non-default values to reduce memory usage
 	var achievement_data: Dictionary = {}
@@ -404,7 +404,7 @@ func set_data(p_data: Array[Dictionary]) -> void:
 ## [b]Example[/b]:
 ## [codeblock]
 ## var achievements_manager : AchievementsManager = AchievementsManager.new()
-## achievements_manager.add_achievement("First Achievement", "Complete the tutorial", 1)
+## achievements_manager.add_achievement("First Achievement", "Complete the tutorial", "", true)
 ## print(JSON.stringify(achievements_manager.prettify(), "\t"))
 ## [/codeblock]
 func prettify() -> Array[Dictionary]:

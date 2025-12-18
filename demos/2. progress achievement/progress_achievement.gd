@@ -10,8 +10,8 @@ func _ready() -> void:
 	var entry : AchievementEntry = manager.add_achievement(
 		"Skilled Hunter",
 		"Defeat 10 enemies",
-		false,
 		"",
+		false,
 		null,
 		metadata
 	)

@@ -59,10 +59,10 @@ extends RefCounted
 ## [/codeblock]
 class_name AchievementEntry
 
-## Emitted when [method set_unlocked] is called. Useful for notifying UI or other systems that achievement data has changed.
+## Emitted when the achievement is unlocked through [method set_unlocked].
 signal achievement_unlocked(p_achievement_entry : AchievementEntry)
 
-## Emitted when [method set_updated] is called. Useful for notifying UI or other systems that achievement data has changed.
+## Emitted when [method set_updated] is called to notify that achievement data has been updated.
 signal achievement_updated(p_achievement_entry : AchievementEntry)
 
 # Enum representing the field indices for achievement data storage.[br]
@@ -70,7 +70,7 @@ signal achievement_updated(p_achievement_entry : AchievementEntry)
 # [b]Note:[/b] ID is not stored in the dictionary - it's the array index in AchievementsManager.
 enum _key {
 	NAME,        # Display name of the achievement
-	DESCRIPTION, # Description text explaining how to unlock
+	DESCRIPTION, # Achievement description
 	HIDDEN,      # Whether the achievement should be hidden until unlocked
 	UNLOCKED,    # Whether the achievement is unlocked (runtime state)
 	STRING_ID,   # String identifier for interfacing with external achievement systems
@@ -88,14 +88,14 @@ var _id: int
 var _manager_ref: WeakRef
 
 
-## Initializes a new achievement entry.[br]
-## [br]
-## [b]For internal use by AchievementsManager.[/b] Use [method AchievementsManager.get_entry]
-## to obtain an [AchievementEntry] instance.[br]
-## [br]
-## [param p_id]: The achievement ID (array index).[br]
-## [param p_data]: Dictionary reference containing achievement data indexed by [enum _key] values.[br]
-## [param p_manager]: Reference to the AchievementsManager instance.
+# Initializes a new achievement entry.[br]
+# [br]
+# [b]For internal use by AchievementsManager.[/b] Use [method AchievementsManager.get_achievement_entry]
+# to obtain an [AchievementEntry] instance.[br]
+# [br]
+# [param p_id]: The achievement ID (array index).[br]
+# [param p_data]: Dictionary reference containing achievement data indexed by [enum _key] values.[br]
+# [param p_manager]: Reference to the AchievementsManager instance.
 func _init(p_id: int, p_data: Dictionary, p_manager: AchievementsManager = null) -> void:
 	_id = p_id
 	_data = p_data
@@ -127,9 +127,7 @@ func set_name(value: String) -> void:
 	_data[_key.NAME] = value
 
 
-## Gets the description explaining how to unlock the achievement.[br]
-## [br]
-## [b]Returns:[/b] The achievement description.
+## Returns the achievement description.[br]
 func get_description() -> String:
 	var description: String = _data.get(_key.DESCRIPTION, "")
 	return description
@@ -142,7 +140,7 @@ func set_description(value: String) -> void:
 	_data[_key.DESCRIPTION] = value
 
 
-## Gets whether this achievement should be hidden until unlocked.[br>
+## Gets whether this achievement should be hidden until unlocked.[br]
 ## [br]
 ## [b]Returns:[/b] [code]true[/code] if hidden, [code]false[/code] otherwise.
 func get_hidden() -> bool:
@@ -299,20 +297,17 @@ func unlock() -> void:
 	set_unlocked(true)
 
 
-## Converts this achievement entry to a dictionary indexed by [enum _key] values.[br]
+## Returns a reference to the internal achievement data dictionary.[br]
 ## [br]
-## [b]Returns:[/b] Dictionary containing all achievement data.[br]
-## [br]
-## [color=yellow]Warning:[/color] Returns a reference to the internal dictionary. Modifying it will modify the data accessed by the AchievementEntry instance and the AchievementsManager instance as well.
+## [color=yellow]Warning:[/color] Modifying this dictionary will modify the data accessed by the AchievementEntry instance and the AchievementsManager instance as well.
 func get_data() -> Dictionary:
 	return _data
 
 
-## Utility function for emitting [signal achievement_updated] when an achievement's data is updated.[br]
+## Emits [signal achievement_updated] to notify that achievement data has been updated.[br]
 ## [br]
-## This is useful for notifying UI systems or other listeners that the achievement should be refreshed,
-## even if the progress or unlock state hasn't changed. For example, when updating the name, description,
-## icon, or metadata.
+## Call this after modifying achievement properties (e.g., name, description, icon, or metadata) to signal
+## that the achievement should be refreshed in UI or other systems, even if the unlock state hasn't changed.
 func set_updated() -> void:
 	achievement_updated.emit(self)
 

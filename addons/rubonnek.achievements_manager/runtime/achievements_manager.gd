@@ -399,7 +399,23 @@ func set_data(p_data: Array[Dictionary]) -> void:
 		EngineDebugger.send_message("achievements_manager:set_data", [get_instance_id(), p_data])
 
 
-## Returns a duplicated achievements array with internal keys replaced with strings for easier reading/debugging.[br]
+
+## Sets the string IDs for achievements based on the keys of an enum dictionary.[br]
+## [br]
+## The string IDs for each achievement will be the enum keys in snake_case format.[br]
+## [br]
+## [param p_enum]: Dictionary mapping string IDs to achievement IDs
+func set_string_ids_using_enum(p_enum: Dictionary) -> void:
+	for string_id: String in p_enum:
+		var snake_case_string_id : String = string_id.to_snake_case()
+		var id: int = p_enum[string_id]
+		if not __is_valid_id(id):
+			push_error("AchievementsManager: Invalid achievement ID in enum: " + str(id))
+			continue
+		_achievements[id][AchievementEntry._key.STRING_ID] = snake_case_string_id
+
+
+## Returns a duplicated achievements array with internal keys replaced with strings for easier reading/debugging.
 ## [br]
 ## [b]Example[/b]:
 ## [codeblock]

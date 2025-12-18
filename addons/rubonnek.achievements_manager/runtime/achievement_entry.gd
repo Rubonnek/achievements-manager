@@ -223,7 +223,7 @@ func set_metadata(p_key: Variant, p_value: Variant) -> void:
 	metadata[p_key] = p_value
 	if not _data.has(_key.METADATA):
 		_data[_key.METADATA] = metadata
-
+	__send_entry_to_manager_viewer()
 
 ## Gets a metadata value from this achievement.[br]
 ## [br]

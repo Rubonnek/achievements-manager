@@ -143,9 +143,9 @@ func set_description(value: String) -> void:
 ## Gets whether this achievement should be hidden until unlocked.[br]
 ## [br]
 ## [b]Returns:[/b] [code]true[/code] if hidden, [code]false[/code] otherwise.
-func get_hidden() -> bool:
-	var is_hidden: bool = _data.get(_key.HIDDEN, false)
-	return is_hidden
+func is_hidden() -> bool:
+	var is_visible: bool = _data.get(_key.HIDDEN, false)
+	return is_visible
 
 
 ## Sets whether this achievement should be hidden until unlocked.[br]

@@ -270,7 +270,7 @@ func __refresh_achievement_entries() -> void:
 		var tooltip_string : String = "ID: %d\n" % achievement_id
 		tooltip_string += "Description: %s\n" % achievement_description
 		tooltip_string += "Unlocked: %s\n" % achievement_entry.is_unlocked()
-		tooltip_string += "Hidden: %s\n" % achievement_entry.get_hidden()
+		tooltip_string += "Hidden: %s\n" % achievement_entry.is_hidden()
 		if not achievement_entry.get_string_id().is_empty():
 			tooltip_string += "String ID: %s\n" % achievement_entry.get_string_id()
 		achievement_tree_item.set_tooltip_text(column, tooltip_string)
@@ -333,7 +333,7 @@ func __on_achievement_view_selection_item_selected() -> void:
 		data_view += "Description: %s\n" % achievement.get_description()
 		data_view += "\n"
 		data_view += "Unlocked: %s\n" % str(achievement.is_unlocked())
-		data_view += "Hidden: %s\n" % str(achievement.get_hidden())
+		data_view += "Hidden: %s\n" % str(achievement.is_hidden())
 		data_view += "\n"
 		if not achievement.get_string_id().is_empty():
 			data_view += "String ID: %s\n" % achievement.get_string_id()

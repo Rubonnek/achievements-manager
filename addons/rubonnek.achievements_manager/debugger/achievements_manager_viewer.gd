@@ -269,10 +269,13 @@ func __refresh_achievement_entries() -> void:
 		achievement_tree_item.set_text(column, achievement_name)
 		var tooltip_string : String = "ID: %d\n" % achievement_id
 		tooltip_string += "Description: %s\n" % achievement_description
-		tooltip_string += "Unlocked: %s\n" % achievement_entry.is_unlocked()
+		var achievement_string_id : String = achievement_entry.get_string_id()
+		if achievement_string_id.is_empty():
+			achievement_string_id = "(Empty Description)"
+		tooltip_string += "String ID: %s\n" % achievement_string_id
 		tooltip_string += "Hidden: %s\n" % achievement_entry.is_hidden()
-		if not achievement_entry.get_string_id().is_empty():
-			tooltip_string += "String ID: %s\n" % achievement_entry.get_string_id()
+		tooltip_string += "Has Metadata: %s\n" % str(achievement_entry.has_metadata())
+		tooltip_string += "Unlocked: %s\n" % achievement_entry.is_unlocked()
 		achievement_tree_item.set_tooltip_text(column, tooltip_string)
 
 		# Store the achievements manager and achievement ID on its tree item so that we can retrieve its data easily later.
@@ -331,15 +334,13 @@ func __on_achievement_view_selection_item_selected() -> void:
 		data_view += "ID: %d\n" % achievement_id
 		data_view += "Name: %s\n" % achievement.get_name()
 		data_view += "Description: %s\n" % achievement.get_description()
-		data_view += "\n"
-		data_view += "Unlocked: %s\n" % str(achievement.is_unlocked())
+		var achievement_string_id : String = achievement.get_string_id()
+		if achievement_string_id.is_empty():
+			achievement_string_id = "(Empty Description)"
+		data_view += "String ID: %s\n" % achievement_string_id
 		data_view += "Hidden: %s\n" % str(achievement.is_hidden())
-		data_view += "\n"
-		if not achievement.get_string_id().is_empty():
-			data_view += "String ID: %s\n" % achievement.get_string_id()
-			data_view += "\n"
-		if achievement.get_icon() != null:
-			data_view += "Icon: %s\n" % str(achievement.get_icon())
+		data_view += "Has Metadata: %s\n" % str(achievement.has_metadata())
+		data_view += "Unlocked: %s\n" % str(achievement.is_unlocked())
 
 		achievements_manager_viewer_achievement_data_view_text_edit_.set_text(data_view.strip_edges(true,true))
 

@@ -95,9 +95,9 @@ func _init() -> void:
 
 # Validates that an achievement ID is within bounds.[br]
 # [br]
-# [param p_id]: The unique ID of the achievement (array index)[br]
+# [param p_id]: The unique ID of the achievement (array index).[br]
 # [br]
-# [b]Returns:[/b] [code]true[/code] if the ID is valid, [code]false[/code] otherwise
+# [b]Returns:[/b] [code]true[/code] if the ID is valid, [code]false[/code] otherwise.
 func __is_valid_id(p_id: int) -> bool:
 	return p_id >= 0 and p_id < _achievements.size()
 
@@ -109,12 +109,12 @@ func __is_valid_id(p_id: int) -> bool:
 ## [br]
 ## [param p_name]: Display name (optional)[br]
 ## [param p_description]: Description text (optional)[br]
-## [param p_hidden]: Whether to hide until unlocked (default: false)[br]
 ## [param p_string_id]: String identifier for external achievement systems (optional)[br]
+## [param p_hidden]: Whether to hide until unlocked (default: false)[br]
 ## [param p_icon]: Icon texture for the achievement (optional)[br]
 ## [param p_metadata]: Additional metadata dictionary (optional)[br]
 ## [br]
-## [b]Returns:[/b] The AchievementEntry for the newly added achievement
+## [b]Returns:[/b] The AchievementEntry for the newly added achievement.
 func add_achievement(p_name: String = "", p_description: String = "", p_string_id: String = "", p_hidden: bool = false, p_icon: Texture2D = null, p_metadata: Dictionary = {}) -> AchievementEntry:
 
 	# Only store non-default values to reduce memory usage
@@ -151,7 +151,7 @@ func add_achievement(p_name: String = "", p_description: String = "", p_string_i
 ## If the achievement is already unlocked, this method does nothing.
 ## Signals are emitted by the [AchievementEntry] itself.[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement to unlock
+## [param p_id]: The unique ID of the achievement to unlock.
 func unlock_achievement(p_id: int) -> void:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -161,13 +161,11 @@ func unlock_achievement(p_id: int) -> void:
 	achievement_entry.unlock()
 
 
-
-
 ## Checks if an achievement is unlocked.[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement[br]
+## [param p_id]: The unique ID of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] [code]true[/code] if the achievement is unlocked, [code]false[/code] otherwise
+## [b]Returns:[/b] [code]true[/code] if the achievement is unlocked, [code]false[/code] otherwise.
 func is_achievement_unlocked(p_id: int) -> bool:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -178,13 +176,11 @@ func is_achievement_unlocked(p_id: int) -> bool:
 	return is_unlocked
 
 
-
-
 ## Gets the name of an achievement (optimized accessor).[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement[br]
+## [param p_id]: The unique ID of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement name, or empty string if not found
+## [b]Returns:[/b] The achievement name, or empty string if not found.
 func get_achievement_name(p_id: int) -> String:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -197,9 +193,9 @@ func get_achievement_name(p_id: int) -> String:
 
 ## Gets the description of an achievement (optimized accessor).[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement[br]
+## [param p_id]: The unique ID of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement description, or empty string if not found
+## [b]Returns:[/b] The achievement description, or empty string if not found.
 func get_achievement_description(p_id: int) -> String:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -214,9 +210,9 @@ func get_achievement_description(p_id: int) -> String:
 
 ## Checks if an achievement is hidden (optimized accessor).[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement[br]
+## [param p_id]: The unique ID of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] [code]true[/code] if the achievement is hidden, [code]false[/code] otherwise
+## [b]Returns:[/b] [code]true[/code] if the achievement is hidden, [code]false[/code] otherwise.
 func is_achievement_hidden(p_id: int) -> bool:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -231,9 +227,9 @@ func is_achievement_hidden(p_id: int) -> bool:
 ## [br]
 ## Used for interfacing with external achievement systems (e.g., Steam, Epic Games).[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement[br]
+## [param p_id]: The unique ID of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement string ID, or empty string if not found
+## [b]Returns:[/b] The achievement string ID, or empty string if not found.
 func get_achievement_string_id(p_id: int) -> String:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -246,9 +242,9 @@ func get_achievement_string_id(p_id: int) -> String:
 
 ## Gets the icon of an achievement (optimized accessor).[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement[br]
+## [param p_id]: The unique ID of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement icon texture, or [code]null[/code] if not found or not set
+## [b]Returns:[/b] The achievement icon texture, or [code]null[/code] if not found or not set.
 func get_achievement_icon(p_id: int) -> Texture2D:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -263,9 +259,9 @@ func get_achievement_icon(p_id: int) -> Texture2D:
 ## [br]
 ## Metadata can store arbitrary key-value pairs for custom achievement data.[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement[br]
+## [param p_id]: The unique ID of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement metadata dictionary, or empty dictionary if not found
+## [b]Returns:[/b] The achievement metadata dictionary, or empty dictionary if not found.
 func get_achievement_metadata(p_id: int) -> Dictionary:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -280,9 +276,9 @@ func get_achievement_metadata(p_id: int) -> Dictionary:
 ## [br]
 ## This returns a cached [AchievementEntry] instance that wraps the internal dictionary reference.[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement[br]
+## [param p_id]: The unique ID of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] [AchievementEntry] instance, or [code]null[/code] if not found
+## [b]Returns:[/b] [AchievementEntry] instance, or [code]null[/code] if not found.
 func get_achievement_entry(p_id: int) -> AchievementEntry:
 	if not (p_id < _achievements.size() && p_id >= 0):
 		push_error("AchievementsManager: achievement entry with id '%d' does not exist." % p_id)
@@ -297,21 +293,21 @@ func has_achievement(p_id: int) -> bool:
 
 ## Gets all achievements as an array of [AchievementEntry] objects.[br]
 ## [br]
-## [b]Returns:[/b] Array containing all registered achievements as [AchievementEntry] instances
+## [b]Returns:[/b] Array containing all registered achievements as [AchievementEntry] instances.
 func get_all_achievement_entries() -> Array[AchievementEntry]:
 	return _achievement_entries.duplicate()
 
 
 ## Gets all achievement IDs.[br]
 ## [br]
-## [b]Returns:[/b] Array of all registered achievement IDs (array indices)
+## [b]Returns:[/b] Array of all registered achievement IDs (array indices).
 func get_all_achievement_ids() -> Array[int]:
 	return range(_achievements.size())
 
 
 ## Gets the number of unlocked achievements.[br]
 ## [br]
-## [b]Returns:[/b] Count of unlocked achievements
+## [b]Returns:[/b] Count of unlocked achievements.
 func get_unlocked_count() -> int:
 	var count: int = 0
 	for achievement: Dictionary in _achievements:
@@ -323,7 +319,7 @@ func get_unlocked_count() -> int:
 
 ## Gets the total number of registered achievements.[br]
 ## [br]
-## [b]Returns:[/b] Total count of achievements
+## [b]Returns:[/b] Total count of achievements.
 func get_total_count() -> int:
 	return _achievements.size()
 
@@ -335,7 +331,7 @@ func size() -> int:
 
 ## Returns a number between 0 and 1 representing the percent of overall unlocked achievements.[br]
 ## [br]
-## [b]Returns:[/b] Progress value from 0.0 to 1.0
+## [b]Returns:[/b] Progress value from 0.0 to 1.0.
 func get_progress() -> float:
 	if _achievements.is_empty():
 		return 1.0
@@ -361,7 +357,7 @@ func reset() -> void:
 ## [br]
 ## This does not unregister the achievement, only resets its unlock status and progress.[br]
 ## [br]
-## [param p_id]: The unique ID of the achievement to reset
+## [param p_id]: The unique ID of the achievement to reset.
 func reset_achievement(p_id: int) -> void:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
@@ -376,7 +372,9 @@ func reset_achievement(p_id: int) -> void:
 	achievement_entry.__send_entry_to_manager_viewer()
 
 
-## Returns a reference to the internal data.
+## Returns a reference to the internal data.[br]
+## [br]
+## [color=yellow]Warning:[/color] Modifying this dictionary will modify the underlying data that achievements manager handles.
 func get_data() -> Array[Dictionary]:
 	return _achievements
 
@@ -385,7 +383,7 @@ func get_data() -> Array[Dictionary]:
 ## [br]
 ## This rebuilds the internal cache of achievement entries.[br]
 ## [br]
-## [param p_data]: Array of achievement dictionaries to load
+## [param p_data]: Array of achievement dictionaries to load. Expects the data from [method get_data].
 func set_data(p_data: Array[Dictionary]) -> void:
 	_achievements = p_data
 	_achievement_entries.clear()
@@ -404,7 +402,7 @@ func set_data(p_data: Array[Dictionary]) -> void:
 ## [br]
 ## The string IDs for each achievement will be the enum keys in snake_case format.[br]
 ## [br]
-## [param p_enum]: Dictionary mapping string IDs to achievement IDs
+## [param p_enum]: Dictionary mapping string IDs to achievement IDs.
 func set_string_ids_using_enum(p_enum: Dictionary) -> void:
 	for string_id: String in p_enum:
 		var snake_case_string_id : String = string_id.to_snake_case()

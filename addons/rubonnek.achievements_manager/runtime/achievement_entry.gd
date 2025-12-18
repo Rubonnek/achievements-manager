@@ -88,14 +88,14 @@ var _id: int
 var _manager_ref: WeakRef
 
 
-# Initializes a new achievement entry.[br]
-# [br]
-# [b]For internal use by AchievementsManager.[/b] Use [method AchievementsManager.get_entry]
-# to obtain an [AchievementEntry] instance.[br]
-# [br]
-# [param p_id]: The achievement ID (array index)[br]
-# [param p_data]: Dictionary reference containing achievement data indexed by [enum _key] values[br]
-# [param p_manager]: Reference to the AchievementsManager instance
+## Initializes a new achievement entry.[br]
+## [br]
+## [b]For internal use by AchievementsManager.[/b] Use [method AchievementsManager.get_entry]
+## to obtain an [AchievementEntry] instance.[br]
+## [br]
+## [param p_id]: The achievement ID (array index).[br]
+## [param p_data]: Dictionary reference containing achievement data indexed by [enum _key] values.[br]
+## [param p_manager]: Reference to the AchievementsManager instance.
 func _init(p_id: int, p_data: Dictionary, p_manager: AchievementsManager = null) -> void:
 	_id = p_id
 	_data = p_data
@@ -107,14 +107,14 @@ func _init(p_id: int, p_data: Dictionary, p_manager: AchievementsManager = null)
 
 ## Gets the unique identifier for this achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement ID (array index)
+## [b]Returns:[/b] The achievement ID (array index).
 func get_id() -> int:
 	return _id
 
 
 ## Gets the display name of the achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement name
+## [b]Returns:[/b] The achievement name.
 func get_name() -> String:
 	var name: String = _data.get(_key.NAME, "")
 	return name
@@ -122,14 +122,14 @@ func get_name() -> String:
 
 ## Sets the display name of the achievement.[br]
 ## [br]
-## [param value]: The new achievement name
+## [param value]: The new achievement name.
 func set_name(value: String) -> void:
 	_data[_key.NAME] = value
 
 
 ## Gets the description explaining how to unlock the achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement description
+## [b]Returns:[/b] The achievement description.
 func get_description() -> String:
 	var description: String = _data.get(_key.DESCRIPTION, "")
 	return description
@@ -137,14 +137,14 @@ func get_description() -> String:
 
 ## Sets the description explaining how to unlock the achievement.[br]
 ## [br]
-## [param value]: The new achievement description
+## [param value]: The new achievement description.
 func set_description(value: String) -> void:
 	_data[_key.DESCRIPTION] = value
 
 
 ## Gets whether this achievement should be hidden until unlocked.[br>
 ## [br]
-## [b]Returns:[/b] [code]true[/code] if hidden, [code]false[/code] otherwise
+## [b]Returns:[/b] [code]true[/code] if hidden, [code]false[/code] otherwise.
 func get_hidden() -> bool:
 	var is_hidden: bool = _data.get(_key.HIDDEN, false)
 	return is_hidden
@@ -152,14 +152,14 @@ func get_hidden() -> bool:
 
 ## Sets whether this achievement should be hidden until unlocked.[br]
 ## [br]
-## [param value]: [code]true[/code] to hide, [code]false[/code] to show
+## [param value]: [code]true[/code] to hide, [code]false[/code] to show.
 func set_hidden(value: bool) -> void:
 	_data[_key.HIDDEN] = value
 
 
 ## Gets whether this achievement is currently unlocked.[br]
 ## [br]
-## [b]Returns:[/b] [code]true[/code] if unlocked, [code]false[/code] otherwise
+## [b]Returns:[/b] [code]true[/code] if unlocked, [code]false[/code] otherwise.
 func is_unlocked() -> bool:
 	var unlocked: bool = _data.get(_key.UNLOCKED, false)
 	return unlocked
@@ -169,7 +169,7 @@ func is_unlocked() -> bool:
 ## [br]
 ## Emits [signal achievement_unlocked] when unlocking an achievement.[br]
 ## [br]
-## [param value]: [code]true[/code] to unlock, [code]false[/code] to lock
+## [param value]: [code]true[/code] to unlock, [code]false[/code] to lock.
 func set_unlocked(value: bool) -> void:
 	if value:
 		_data[_key.UNLOCKED] = true
@@ -184,7 +184,7 @@ func set_unlocked(value: bool) -> void:
 ## [br]
 ## Used for interfacing with external achievement systems (e.g., Steam, Epic Games).[br]
 ## [br]
-## [b]Returns:[/b] The achievement string ID
+## [b]Returns:[/b] The achievement string ID.
 func get_string_id() -> String:
 	var string_id: String = _data.get(_key.STRING_ID, "")
 	return string_id
@@ -194,14 +194,14 @@ func get_string_id() -> String:
 ## [br]
 ## Used for interfacing with external achievement systems (e.g., Steam, Epic Games).[br]
 ## [br]
-## [param value]: The new achievement string ID
+## [param value]: The new achievement string ID.
 func set_string_id(value: String) -> void:
 	_data[_key.STRING_ID] = value
 
 
 ## Gets the icon texture for this achievement.[br]
 ## [br]
-## [b]Returns:[/b] The achievement icon texture, or [code]null[/code] if not set
+## [b]Returns:[/b] The achievement icon texture, or [code]null[/code] if not set.
 func get_icon() -> Texture2D:
 	var icon: Texture2D = _data.get(_key.ICON, null)
 	return icon
@@ -209,7 +209,7 @@ func get_icon() -> Texture2D:
 
 ## Sets the icon texture for this achievement.[br]
 ## [br]
-## [param value]: The new achievement icon texture
+## [param value]: The new achievement icon texture.
 func set_icon(value: Texture2D) -> void:
 	_data[_key.ICON] = value
 
@@ -218,8 +218,8 @@ func set_icon(value: Texture2D) -> void:
 ## [br]
 ## Metadata can store arbitrary key-value pairs for custom achievement data.[br]
 ## [br]
-## [param p_key]: The metadata key[br]
-## [param p_value]: The metadata value
+## [param p_key]: The metadata key.[br]
+## [param p_value]: The metadata value.
 func set_metadata(p_key: Variant, p_value: Variant) -> void:
 	var metadata: Dictionary = _data.get(_key.METADATA, {})
 	metadata[p_key] = p_value
@@ -229,10 +229,10 @@ func set_metadata(p_key: Variant, p_value: Variant) -> void:
 
 ## Gets a metadata value from this achievement.[br]
 ## [br]
-## [param p_key]: The metadata key to retrieve[br]
-## [param p_default_value]: The default value to return if the key doesn't exist[br]
+## [param p_key]: The metadata key to retrieve.[br]
+## [param p_default_value]: The default value to return if the key doesn't exist.[br]
 ## [br]
-## [b]Returns:[/b] The metadata value, or the default value if not found
+## [b]Returns:[/b] The metadata value, or the default value if not found.
 func get_metadata(p_key: Variant, p_default_value: Variant = null) -> Variant:
 	var metadata: Dictionary = _data.get(_key.METADATA, {})
 	var value: Variant = metadata.get(p_key, p_default_value)
@@ -241,7 +241,7 @@ func get_metadata(p_key: Variant, p_default_value: Variant = null) -> Variant:
 
 ## Gets a reference to the internal metadata dictionary.[br]
 ## [br]
-## [b]Returns:[/b] The metadata dictionary, or empty dictionary if not set[br]
+## [b]Returns:[/b] The metadata dictionary, or empty dictionary if not set.[br]
 ## [br]
 ## [color=yellow]Warning:[/color] Returns a reference to the internal dictionary. Modifying it will modify the metadata directly.
 func get_metadata_data() -> Dictionary:
@@ -254,7 +254,7 @@ func get_metadata_data() -> Dictionary:
 
 ## Checks if this achievement has any metadata.[br]
 ## [br]
-## [b]Returns:[/b] [code]true[/code] if metadata exists and is not empty, [code]false[/code] otherwise
+## [b]Returns:[/b] [code]true[/code] if metadata exists and is not empty, [code]false[/code] otherwise.
 func has_metadata() -> bool:
 	var metadata: Dictionary = _data.get(_key.METADATA, {})
 	var has_data: bool = not metadata.is_empty()
@@ -263,14 +263,14 @@ func has_metadata() -> bool:
 
 ## Gets the weak reference to the achievements manager.[br]
 ## [br]
-## [b]Returns:[/b] WeakRef to the manager, or [code]null[/code] if not set
+## [b]Returns:[/b] WeakRef to the manager, or [code]null[/code] if not set.
 func get_manager_ref() -> WeakRef:
 	return _manager_ref
 
 
 ## Sets the weak reference to the achievements manager.[br]
 ## [br]
-## [param p_manager]: Reference to the AchievementsManager instance
+## [param p_manager]: Reference to the AchievementsManager instance.
 func set_manager_ref(p_manager: AchievementsManager) -> void:
 	if p_manager:
 		_manager_ref = weakref(p_manager)
@@ -280,7 +280,7 @@ func set_manager_ref(p_manager: AchievementsManager) -> void:
 
 ## Gets the achievements manager instance if still valid.[br]
 ## [br]
-## [b]Returns:[/b] The AchievementsManager instance, or [code]null[/code] if invalid
+## [b]Returns:[/b] The AchievementsManager instance, or [code]null[/code] if invalid.
 func get_manager() -> AchievementsManager:
 	if _manager_ref:
 		var manager: AchievementsManager = _manager_ref.get_ref()
@@ -301,7 +301,7 @@ func unlock() -> void:
 
 ## Converts this achievement entry to a dictionary indexed by [enum _key] values.[br]
 ## [br]
-## [b]Returns:[/b] Dictionary containing all achievement data[br]
+## [b]Returns:[/b] Dictionary containing all achievement data.[br]
 ## [br]
 ## [color=yellow]Warning:[/color] Returns a reference to the internal dictionary. Modifying it will modify the data accessed by the AchievementEntry instance and the AchievementsManager instance as well.
 func get_data() -> Dictionary:

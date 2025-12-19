@@ -14,45 +14,50 @@ func _ready() -> void:
 		"First Steps",
 		"Complete your first action",
 		"first_steps",
+		1,
 		false,
 		null,
-		{"target": 1, "progress": 0}
+		{}
 	)
 
 	var second_steps_entry : AchievementEntry = achievements_manager.add_achievement(
 		"Second Steps",
 		"Complete your second action",
 		"second_steps",
+		1,
 		false,
 		null,
-		{"target": 1, "progress": 0}
+		{}
 	)
 
 	var explorer_entry : AchievementEntry = achievements_manager.add_achievement(
 		"Explorer",
 		"Discover 10 locations",
 		"explorer",
+		10,
 		false,
 		null,
-		{"target": 10, "progress": 0}
+		{}
 	)
 
 	var hidden_treasure_entry : AchievementEntry = achievements_manager.add_achievement(
 		"Hidden Treasure",
 		"Find the secret treasure",
 		"hidden_treasure",
+		1,
 		true,
 		null,
-		{"target": 1, "progress": 0}
+		{}
 	)
 
 	var collector_entry : AchievementEntry = achievements_manager.add_achievement(
 		"Collector",
 		"Collect 100 items",
 		"collector",
+		100,
 		false,
 		null,
-		{"target": 100, "progress": 0}
+		{}
 	)
 
 	# Connect signals from each achievement entry
@@ -68,24 +73,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		var key_event : InputEventKey = event
 		if key_event.pressed and key_event.keycode == KEY_ENTER:
 			# Add progress to achievements
-			for entry : AchievementEntry in achievements_manager:
-				if not entry.is_unlocked():
-					var current_progress: int = entry.get_metadata("progress", 0)
-					var target: int = entry.get_metadata("target", 1)
-					var new_progress: int = mini(current_progress + 1, target)
-					entry.set_metadata("progress", new_progress)
+					for entry : AchievementEntry in achievements_manager:
+						if not entry.is_unlocked():
+							entry.add_progress(1)
 
-					# Set the quest as updated -- this will emit its achievement_updated signal
-					entry.set_updated()
+							var current_progress: int = entry.get_progress_current()
+							var target: int = entry.get_progress_max()
 
-					var message : String = "Progress for '%s': %d/%d" % [entry.get_name(), new_progress, target]
-					print(message)
-					demo_notification_label.set_text(message)
+							var message : String = "Progress for '%s': %d/%d" % [entry.get_name(), current_progress, target]
+							print(message)
+							demo_notification_label.set_text(message)
 
-					# Check if we should unlock
-					if new_progress >= target:
-						entry.unlock()
-					break
+							break
 
 		elif key_event.pressed and key_event.keycode == KEY_SPACE:
 			# Unlock all achievements

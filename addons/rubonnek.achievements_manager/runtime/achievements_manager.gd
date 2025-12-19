@@ -105,31 +105,35 @@ func __is_valid_id(p_id: int) -> bool:
 ## Adds a new achievement to the manager.[br]
 ## [br]
 ## The achievement ID is automatically assigned as the next available index in the array.
-## Use metadata to track custom properties such as progress.[br]
+## Use progress_max for progress tracking or metadata for custom properties.[br]
 ## [br]
 ## [param p_name]: Display name (optional)[br]
 ## [param p_description]: Description text (optional)[br]
 ## [param p_string_id]: String identifier for external achievement systems (optional)[br]
+## [param p_progress_max]: Maximum progress value for the achievement (optional, default: 0)[br]
 ## [param p_hidden]: Whether to hide until unlocked (default: false)[br]
 ## [param p_icon]: Icon texture for the achievement (optional)[br]
 ## [param p_metadata]: Additional metadata dictionary (optional)[br]
 ## [br]
 ## [b]Returns:[/b] The AchievementEntry for the newly added achievement.
-func add_achievement(p_name: String = "", p_description: String = "", p_string_id: String = "", p_hidden: bool = false, p_icon: Texture2D = null, p_metadata: Dictionary = {}) -> AchievementEntry:
+func add_achievement(p_name: String = "", p_description: String = "", p_string_id: String = "", p_progress_max: int = 1, p_hidden: bool = false, p_icon: Texture2D = null, p_metadata: Dictionary = {}) -> AchievementEntry:
+	assert(p_progress_max >= 1, "AchievementsManager: the achievement's max progress should be one or greater.")
 
 	# Only store non-default values to reduce memory usage
 	var achievement_data: Dictionary = {}
 
-	if p_name != "":
+	if not p_name.is_empty():
 		achievement_data[AchievementEntry._key.NAME] = p_name
-	if p_description != "":
+	if not p_description.is_empty():
 		achievement_data[AchievementEntry._key.DESCRIPTION] = p_description
 	if p_hidden:
 		achievement_data[AchievementEntry._key.HIDDEN] = p_hidden
-	if p_string_id != "":
+	if not p_string_id.is_empty():
 		achievement_data[AchievementEntry._key.STRING_ID] = p_string_id
 	if p_icon != null:
 		achievement_data[AchievementEntry._key.ICON] = p_icon
+	if p_progress_max != 1:
+		achievement_data[AchievementEntry._key.PROGRESS_MAX] = p_progress_max
 	if not p_metadata.is_empty():
 		achievement_data[AchievementEntry._key.METADATA] = p_metadata
 
@@ -272,6 +276,52 @@ func get_achievement_metadata(p_id: int) -> Dictionary:
 	return metadata
 
 
+## Sets the progress for an achievement.[br]
+## [br]
+## [param p_id]: The unique ID of the achievement.[br]
+## [param p_current]: The current progress value.[br]
+func set_achievement_progress(p_id: int, p_current: int, p_max: int) -> void:
+	if not __is_valid_id(p_id):
+		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
+		return
+	var achievement_entry: AchievementEntry = get_achievement_entry(p_id)
+	achievement_entry.set_progress(p_current, p_max)
+
+
+## Sets the current progress for an achievement.[br]
+## [br]
+## [param p_id]: The unique ID of the achievement.[br]
+func set_achievement_progress_current(p_id: int, p_current: int) -> void:
+	if not __is_valid_id(p_id):
+		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
+		return
+	var achievement_entry: AchievementEntry = get_achievement_entry(p_id)
+	achievement_entry.set_progress_current(p_current)
+
+
+## Sets the max progress for an achievement.[br]
+## [br]
+## [param p_id]: The unique ID of the achievement.[br]
+func set_achievement_progress_max(p_id: int, p_max: int) -> void:
+	if not __is_valid_id(p_id):
+		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
+		return
+	var achievement_entry: AchievementEntry = get_achievement_entry(p_id)
+	achievement_entry.set_progress_max(p_max)
+
+
+## Adds the specified amount to the progress of an achievement.[br]
+## [br]
+## [param p_id]: The unique ID of the achievement.[br]
+## [param p_amount]: The amount to add to the progress.
+func add_achievement_progress(p_id: int, p_amount: int) -> void:
+	if not __is_valid_id(p_id):
+		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
+		return
+	var achievement_entry: AchievementEntry = get_achievement_entry(p_id)
+	achievement_entry.add_progress(p_amount)
+
+
 ## Gets an achievement as an [AchievementEntry] object.[br]
 ## [br]
 ## This returns a cached [AchievementEntry] instance that wraps the internal dictionary reference.[br]
@@ -342,11 +392,12 @@ func get_progress() -> float:
 
 ## Resets all achievements to their initial locked state with zero progress.[br]
 ## [br]
-## This does not unregister achievements, only resets their unlock status and clears their metadata.
+## This does not unregister achievements, only resets their unlock status, progress, and clears their metadata.
 func reset() -> void:
 	for achievement: Dictionary in _achievements:
 		var _success: bool = achievement.erase(AchievementEntry._key.UNLOCKED)
 		achievement.erase(AchievementEntry._key.METADATA)
+		achievement.erase(AchievementEntry._key.PROGRESS_CURRENT)
 
 	# Sync all entries with debugger
 	for achievement_entry: AchievementEntry in _achievement_entries:
@@ -355,7 +406,7 @@ func reset() -> void:
 
 ## Resets a specific achievement to its initial locked state with zero progress.[br]
 ## [br]
-## This does not unregister the achievement, only resets its unlock status and progress.[br]
+## This does not unregister the achievement, only resets its unlock status, progress, and clears its metadata.[br]
 ## [br]
 ## [param p_id]: The unique ID of the achievement to reset.
 func reset_achievement(p_id: int) -> void:
@@ -366,6 +417,7 @@ func reset_achievement(p_id: int) -> void:
 	var achievement: Dictionary = _achievements[p_id]
 	var _success: bool = achievement.erase(AchievementEntry._key.UNLOCKED)
 	achievement.erase(AchievementEntry._key.METADATA)
+	achievement.erase(AchievementEntry._key.PROGRESS_CURRENT)
 
 	# Sync with debugger
 	var achievement_entry: AchievementEntry = get_achievement_entry(p_id)
@@ -442,6 +494,10 @@ func prettify() -> Array[Dictionary]:
 			prettified_entry["string_id"] = achievement[AchievementEntry._key.STRING_ID]
 		if achievement.has(AchievementEntry._key.ICON):
 			prettified_entry["icon"] = str(achievement[AchievementEntry._key.ICON])
+		if achievement.has(AchievementEntry._key.PROGRESS_CURRENT):
+			prettified_entry["progress_current"] = achievement[AchievementEntry._key.PROGRESS_CURRENT]
+		if achievement.has(AchievementEntry._key.PROGRESS_MAX):
+			prettified_entry["progress_max"] = achievement[AchievementEntry._key.PROGRESS_MAX]
 		if achievement.has(AchievementEntry._key.METADATA):
 			prettified_entry["metadata"] = achievement[AchievementEntry._key.METADATA]
 

@@ -274,6 +274,7 @@ func __refresh_achievement_entries() -> void:
 			achievement_string_id = "(Empty Description)"
 		tooltip_string += "String ID: %s\n" % achievement_string_id
 		tooltip_string += "Hidden: %s\n" % achievement_entry.is_hidden()
+		tooltip_string += "Progress: %d/%d\n" % [achievement_entry.get_progress_current(), achievement_entry.get_progress_max()]
 		tooltip_string += "Has Metadata: %s\n" % str(achievement_entry.has_metadata())
 		tooltip_string += "Unlocked: %s\n" % achievement_entry.is_unlocked()
 		achievement_tree_item.set_tooltip_text(column, tooltip_string)
@@ -327,30 +328,31 @@ func __on_achievement_view_selection_item_selected() -> void:
 		var achievement_tree_item_metadata : Array = selected_tree_item.get_metadata(column)
 		var achievements_manager : AchievementsManager = achievement_tree_item_metadata[0]
 		var achievement_id : int = achievement_tree_item_metadata[1]
-		var achievement : AchievementEntry = achievements_manager.get_achievement_entry(achievement_id)
+		var achievement_entry : AchievementEntry = achievements_manager.get_achievement_entry(achievement_id)
 
 		# Update the data view
 		var data_view : String = ""
 		data_view += "ID: %d\n" % achievement_id
-		data_view += "Name: %s\n" % achievement.get_name()
-		data_view += "Description: %s\n" % achievement.get_description()
-		var achievement_string_id : String = achievement.get_string_id()
+		data_view += "Name: %s\n" % achievement_entry.get_name()
+		data_view += "Description: %s\n" % achievement_entry.get_description()
+		var achievement_string_id : String = achievement_entry.get_string_id()
 		if achievement_string_id.is_empty():
 			achievement_string_id = "(Empty Description)"
 		data_view += "String ID: %s\n" % achievement_string_id
-		data_view += "Hidden: %s\n" % str(achievement.is_hidden())
-		data_view += "Has Metadata: %s\n" % str(achievement.has_metadata())
-		data_view += "Unlocked: %s\n" % str(achievement.is_unlocked())
+		data_view += "Hidden: %s\n" % str(achievement_entry.is_hidden())
+		data_view += "Progress: %d/%d\n" % [achievement_entry.get_progress_current(), achievement_entry.get_progress_max()]
+		data_view += "Has Metadata: %s\n" % str(achievement_entry.has_metadata())
+		data_view += "Unlocked: %s\n" % str(achievement_entry.is_unlocked())
 
 		achievements_manager_viewer_achievement_data_view_text_edit_.set_text(data_view.strip_edges(true,true))
 
 		# Update the metadata view
-		if not achievement.has_metadata():
+		if not achievement_entry.has_metadata():
 			achievements_manager_viewer_achievement_metadata_view_text_edit_.set_text("")
 			achievements_manager_viewer_achievement_metadata_view_warning_label_.set_text("(Empty Metadata)")
 			achievements_manager_viewer_achievement_metadata_view_warning_label_.show()
 		else:
 			achievements_manager_viewer_achievement_metadata_view_warning_label_.hide()
-			var achievement_metadata : Dictionary = achievement.get_metadata_data()
+			var achievement_metadata : Dictionary = achievement_entry.get_metadata_data()
 			var prettified_metadata : String = JSON.stringify(achievement_metadata, "\t").strip_edges(true,true)
 			achievements_manager_viewer_achievement_metadata_view_text_edit_.set_text(prettified_metadata)

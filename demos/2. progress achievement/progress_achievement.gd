@@ -5,44 +5,34 @@ extends Node
 var manager := AchievementsManager.new()
 
 func _ready() -> void:
-	# Add a progress achievement with metadata for tracking
-	var metadata := {"target": 10, "progress": 0}
+	# Add a progress achievement
 	var entry : AchievementEntry = manager.add_achievement(
 		"Skilled Hunter",
 		"Defeat 10 enemies",
 		"",
+		10,
 		false,
 		null,
-		metadata
+		{}
 	)
 
 	# Connect to its signals
 	entry.achievement_updated.connect(__on_achievement_updated)
 	entry.achievement_unlocked.connect(_on_achievement_unlocked)
 
-	var target: int = entry.get_metadata("target", 1)
+	var target: int = entry.get_progress_max()
 	print("Press SPACE to add progress (current: 0/%d)" % target)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
-		# Update progress manually using metadata
+		# Update progress using the new progress API
 		var entry := manager.get_achievement_entry(0)
 		if not entry.is_unlocked():
-			var current_progress: int = entry.get_metadata("progress", 0)
-			var target: int = entry.get_metadata("target", 1)
-			var new_progress: int = mini(current_progress + 1, target)
-			entry.set_metadata("progress", new_progress)
-
-			# Emit progress updated signal manually
-			entry.set_updated()
-
-			# Check if we should unlock
-			if new_progress >= target:
-				entry.unlock()
+			entry.add_progress(1)
 
 func __on_achievement_updated(achievement: AchievementEntry) -> void:
-	var progress: int = achievement.get_metadata("progress", 0)
-	var target: int = achievement.get_metadata("target", 1)
+	var progress: int = achievement.get_progress_current()
+	var target: int = achievement.get_progress_max()
 	print("Progress: %d/%d" % [progress, target])
 	notification_label.set_text("Progress: %d/%d" % [progress, target])
 

@@ -37,7 +37,8 @@ extends RefCounted
 ## [b]Key Features:[/b][br]
 ## - Direct manipulation of achievement properties (name, description, icon, etc.)[br]
 ## - Instant unlocking with [method unlock][br]
-## - Custom metadata storage for extended properties (including progress tracking)[br]
+## - Built-in progress tracking[br]
+## - Custom metadata storage for extended properties[br]
 ## - Weak reference to parent manager for signal emission[br]
 ## [br]
 ## [b]Usage:[/b][br]
@@ -51,10 +52,16 @@ extends RefCounted
 ## # Modify properties
 ## entry.set_name("Updated Name")
 ##
-## # Custom metadata (including progress tracking)
-## entry.set_metadata("progress", 5)
+## # Progress tracking
+## entry.set_progress(5, 10)  # Set current to 5, max to 10
+## entry.add_progress(1)  # Add 1 to progress
+## var current_progress = entry.get_progress_current()
+## var max_progress = entry.get_progress_max()
+## if entry.is_progress_complete():
+##     entry.unlock()
+##
+## # Custom metadata
 ## entry.set_metadata("category", "combat")
-## var progress = entry.get_metadata("progress", 0)
 ## var category = entry.get_metadata("category")
 ## [/codeblock]
 class_name AchievementEntry
@@ -75,6 +82,8 @@ enum _key {
 	UNLOCKED,    # Whether the achievement is unlocked (runtime state)
 	STRING_ID,   # String identifier for interfacing with external achievement systems
 	ICON,        # Icon texture for the achievement
+	PROGRESS_CURRENT, # Current progress value
+	PROGRESS_MAX,     # Maximum progress value
 	METADATA     # Additional arbitrary metadata storage
 }
 
@@ -210,6 +219,100 @@ func get_icon() -> Texture2D:
 ## [param value]: The new achievement icon texture.
 func set_icon(value: Texture2D) -> void:
 	_data[_key.ICON] = value
+
+
+## Gets the current progress value for this achievement.[br]
+## [br]
+## [b]Returns:[/b] The current progress value, or 0 if not set.
+func get_progress_current() -> int:
+	var current: int = _data.get(_key.PROGRESS_CURRENT, 0)
+	if OS.is_debug_build():
+		var max_progress: int = _data.get(_key.PROGRESS_MAX, 1)
+		if current > max_progress:
+			push_warning("AchievementsManager: current progress is greater than max progress. This should not happen.")
+	return current
+
+
+## Sets the current progress value for this achievement.[br]
+## [br]
+## [param p_current]: The new current progress value.
+func set_progress_current(p_current: int) -> void:
+	var max_progress: int = _data.get(_key.PROGRESS_MAX, 1)
+	p_current = mini(p_current, max_progress)
+	_data[_key.PROGRESS_CURRENT] = p_current
+	achievement_updated.emit(self)
+	if is_progress_complete() and not is_unlocked():
+		unlock()
+	__send_entry_to_manager_viewer()
+
+
+## Gets the maximum progress value for this achievement.[br]
+## [br]
+## [b]Returns:[/b] The maximum progress value, or 0 if not set.
+func get_progress_max() -> int:
+	var max_progress: int = _data.get(_key.PROGRESS_MAX, 1)
+	if OS.is_debug_build():
+		var current: int = _data.get(_key.PROGRESS_CURRENT, 1)
+		if current > max_progress:
+			push_warning("AchievementsManager: current progress is greater than max progress. This should not happen.")
+	return max_progress
+
+
+## Sets the maximum progress value for this achievement.[br]
+## [br]
+## [param value]: The new maximum progress value.
+func set_progress_max(p_new_max: int) -> void:
+	_data[_key.PROGRESS_MAX] = p_new_max
+	var current: int = _data.get(_key.PROGRESS_CURRENT, 0)
+	if OS.is_debug_build():
+		if current > p_new_max:
+			push_warning("AchievementsManager: new max progress value is greater than current progress value. Achievement will be unlocked automatically and current value will be clamped. Was this intended?")
+	current = mini(current, p_new_max)
+	if current != 0:
+		_data[_key.PROGRESS_CURRENT] = current
+	achievement_updated.emit(self)
+	if is_progress_complete() and not is_unlocked():
+		unlock()
+	__send_entry_to_manager_viewer()
+
+
+## Sets both the current and maximum progress values for this achievement.[br]
+## [br]
+## [param p_current]: The current progress value.[br]
+## [param p_max]: The maximum progress value.
+func set_progress(p_current: int, p_max: int) -> void:
+	if OS.is_debug_build():
+		if p_current > p_max:
+			push_warning("AchievementsManager: current achievement progress should be less or equal to the max possible progress. Automatically fixing.")
+	p_current = mini(p_current, p_max)
+	_data[_key.PROGRESS_CURRENT] = p_current
+	_data[_key.PROGRESS_MAX] = p_max
+	achievement_updated.emit(self)
+	if is_progress_complete() and not is_unlocked():
+		unlock()
+	__send_entry_to_manager_viewer()
+
+
+## Adds the specified amount to the current progress, without exceeding the maximum.[br]
+## [br]
+## [param p_amount]: The amount to add to the progress.
+func add_progress(p_amount: int = 1) -> void:
+	var current: int = get_progress_current()
+	var max_progress: int = get_progress_max()
+	if OS.is_debug_build():
+		if current > max_progress:
+			push_warning("AchievementsManager: current achievement progress should be less or equal to the max possible progress. Automatically fixing.")
+	current = mini(current + p_amount, max_progress)
+	set_progress_current(current)
+
+
+## Checks if the achievement progress is complete (current >= max).[br]
+## [br]
+## [b]Returns:[/b] [code]true[/code] if progress is complete, [code]false[/code] otherwise.
+func is_progress_complete() -> bool:
+	var current: int = get_progress_current()
+	var max_progress: int = get_progress_max()
+	return current >= max_progress
 
 
 ## Sets a metadata value for this achievement.[br]

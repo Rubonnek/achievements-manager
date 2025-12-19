@@ -229,7 +229,7 @@ func get_progress_current() -> int:
 	if OS.is_debug_build():
 		var max_progress: int = _data.get(_key.PROGRESS_MAX, 1)
 		if current > max_progress:
-			push_warning("AchievementsManager: current progress is greater than max progress. This should not happen.")
+			push_warning("AchievementEntry: current progress is greater than max progress. This should not happen.")
 	return current
 
 
@@ -254,7 +254,7 @@ func get_progress_max() -> int:
 	if OS.is_debug_build():
 		var current: int = _data.get(_key.PROGRESS_CURRENT, 1)
 		if current > max_progress:
-			push_warning("AchievementsManager: current progress is greater than max progress. This should not happen.")
+			push_warning("AchievementEntry: current progress is greater than max progress. This should not happen.")
 	return max_progress
 
 
@@ -266,7 +266,7 @@ func set_progress_max(p_new_max: int) -> void:
 	var current: int = _data.get(_key.PROGRESS_CURRENT, 0)
 	if OS.is_debug_build():
 		if current > p_new_max:
-			push_warning("AchievementsManager: new max progress value is greater than current progress value. Achievement will be unlocked automatically and current value will be clamped. Was this intended?")
+			push_warning("AchievementEntry: new max progress value is greater than current progress value. Achievement will be unlocked automatically and current value will be clamped. Was this intended?")
 	current = mini(current, p_new_max)
 	if current != 0:
 		_data[_key.PROGRESS_CURRENT] = current
@@ -283,7 +283,7 @@ func set_progress_max(p_new_max: int) -> void:
 func set_progress(p_current: int, p_max: int) -> void:
 	if OS.is_debug_build():
 		if p_current > p_max:
-			push_warning("AchievementsManager: current achievement progress should be less or equal to the max possible progress. Automatically fixing.")
+			push_warning("AchievementEntry: current achievement progress should be less or equal to the max possible progress. Automatically fixing.")
 	p_current = mini(p_current, p_max)
 	_data[_key.PROGRESS_CURRENT] = p_current
 	_data[_key.PROGRESS_MAX] = p_max
@@ -301,7 +301,7 @@ func add_progress(p_amount: int = 1) -> void:
 	var max_progress: int = get_progress_max()
 	if OS.is_debug_build():
 		if current > max_progress:
-			push_warning("AchievementsManager: current achievement progress should be less or equal to the max possible progress. Automatically fixing.")
+			push_warning("AchievementEntry: current achievement progress should be less or equal to the max possible progress. Automatically fixing.")
 	current = mini(current + p_amount, max_progress)
 	set_progress_current(current)
 

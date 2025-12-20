@@ -120,6 +120,15 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			# Inject the remote achievement entry data:
 			var remote_achievement_entry_id : int = p_data[1]
 			var remote_achievement_entry_data : Dictionary = p_data[2]
+
+			# Convert the image bytes back into the image object:
+			if remote_achievement_entry_data.has(AchievementEntry._key.ICON):
+				var bytes : PackedByteArray = remote_achievement_entry_data[AchievementEntry._key.ICON]
+				var image : Image = bytes_to_var_with_objects(bytes)
+				image.resize(16,16)
+				var texture : ImageTexture = ImageTexture.create_from_image(image)
+				remote_achievement_entry_data[AchievementEntry._key.ICON] = texture
+
 			stored_achievements_manager.__inject(remote_achievement_entry_id, remote_achievement_entry_data)
 
 			# Refresh the achievement entries if needed:
@@ -258,6 +267,12 @@ func __refresh_achievement_entries() -> void:
 		# Create a TreeItem at the root level
 		var parent_tree_item : TreeItem = achievements_manager_viewer_achievement_entries_tree_.get_root()
 		var achievement_tree_item : TreeItem = achievements_manager_viewer_achievement_entries_tree_.create_item(parent_tree_item)
+
+		# Install the achievement icon:
+		var texture : Texture2D = achievement_entry.get_icon()
+		print(achievement_entry.get_icon())
+		if is_instance_valid(texture):
+			achievement_tree_item.set_icon(column, texture)
 
 		# Install the achievement tooltip:
 		var achievement_name : String = achievement_entry.get_name()

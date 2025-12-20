@@ -219,6 +219,7 @@ func get_icon() -> Texture2D:
 ## [param value]: The new achievement icon texture.
 func set_icon(value: Texture2D) -> void:
 	_data[_key.ICON] = value
+	__send_entry_to_manager_viewer()
 
 
 ## Gets the current progress value for this achievement.[br]
@@ -426,6 +427,12 @@ func __send_entry_to_manager_viewer() -> void:
 
 		# Duplicate the achievement data to avoid modifying the runtime data
 		var duplicated_achievement_data: Dictionary = _data.duplicate(true)
+
+		# Convert the image into an object that we can send into the debugger
+		if duplicated_achievement_data.has(AchievementEntry._key.ICON):
+			var texture : Texture2D = duplicated_achievement_data[AchievementEntry._key.ICON]
+			var image : Image = texture.get_image()
+			duplicated_achievement_data[AchievementEntry._key.ICON] = var_to_bytes_with_objects(image)
 
 		# Stringify metadata keys and values where needed for display
 		var metadata: Dictionary = _data.get(_key.METADATA, {})

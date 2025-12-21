@@ -30,6 +30,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not entry.is_unlocked():
 			entry.add_progress(1)
 
+			# Must emiit the updated signal manually
+			entry.set_updated()
+
 func __on_achievement_updated(achievement: AchievementEntry) -> void:
 	var progress: int = achievement.get_progress_current()
 	var target: int = achievement.get_progress_max()

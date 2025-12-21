@@ -69,8 +69,9 @@ class_name AchievementEntry
 ## Emitted when the achievement is unlocked through [method set_unlocked].
 signal achievement_unlocked(p_achievement_entry : AchievementEntry)
 
-## Emitted when [method set_updated] is called to notify that achievement data has been updated.
+## Emitted when [method set_updated] is called.
 signal achievement_updated(p_achievement_entry : AchievementEntry)
+
 
 # Enum representing the field indices for achievement data storage.[br]
 # Used by [AchievementsManager] to efficiently store and retrieve achievement properties.[br]
@@ -131,9 +132,10 @@ func get_name() -> String:
 
 ## Sets the display name of the achievement.[br]
 ## [br]
-## [param value]: The new achievement name.
-func set_name(value: String) -> void:
-	_data[_key.NAME] = value
+## [param p_name]: The new achievement name.
+func set_name(p_name: String) -> void:
+	_data[_key.NAME] = p_name
+	__send_entry_to_manager_viewer()
 
 
 ## Returns the achievement description.[br]
@@ -144,9 +146,10 @@ func get_description() -> String:
 
 ## Sets the description explaining how to unlock the achievement.[br]
 ## [br]
-## [param value]: The new achievement description.
-func set_description(value: String) -> void:
-	_data[_key.DESCRIPTION] = value
+## [param p_description]: The new achievement description.
+func set_description(p_description: String) -> void:
+	_data[_key.DESCRIPTION] = p_description
+	__send_entry_to_manager_viewer()
 
 
 ## Gets whether this achievement should be hidden until unlocked.[br]
@@ -159,9 +162,10 @@ func is_hidden() -> bool:
 
 ## Sets whether this achievement should be hidden until unlocked.[br]
 ## [br]
-## [param value]: [code]true[/code] to hide, [code]false[/code] to show.
-func set_hidden(value: bool) -> void:
-	_data[_key.HIDDEN] = value
+## [param p_hide]: [code]true[/code] to hide, [code]false[/code] to show.
+func set_hidden(p_hide: bool) -> void:
+	_data[_key.HIDDEN] = p_hide
+	__send_entry_to_manager_viewer()
 
 
 ## Gets whether this achievement is currently unlocked.[br]
@@ -176,16 +180,14 @@ func is_unlocked() -> bool:
 ## [br]
 ## Emits [signal achievement_unlocked] when unlocking an achievement.[br]
 ## [br]
-## [param value]: [code]true[/code] to unlock, [code]false[/code] to lock.
-func set_unlocked(value: bool) -> void:
-	if value:
+## [param p_is_unlocked]: [code]true[/code] to unlock, [code]false[/code] to lock.
+func set_unlocked(p_is_unlocked: bool) -> void:
+	if p_is_unlocked:
 		_data[_key.UNLOCKED] = true
 		achievement_unlocked.emit(self)
-		__send_entry_to_manager_viewer()
 	else:
 		var _success: bool = _data.erase(_key.UNLOCKED)
-		__send_entry_to_manager_viewer()
-
+	__send_entry_to_manager_viewer()
 
 ## Gets the string identifier for this achievement.[br]
 ## [br]
@@ -201,10 +203,10 @@ func get_string_id() -> String:
 ## [br]
 ## Used for interfacing with external achievement systems (e.g., Steam, Epic Games).[br]
 ## [br]
-## [param value]: The new achievement string ID.
-func set_string_id(value: String) -> void:
-	_data[_key.STRING_ID] = value
-
+## [param p_string_id]: The new achievement string ID.
+func set_string_id(p_string_id: String) -> void:
+	_data[_key.STRING_ID] = p_string_id
+	__send_entry_to_manager_viewer()
 
 ## Gets the icon texture for this achievement.[br]
 ## [br]
@@ -216,9 +218,9 @@ func get_icon() -> Texture2D:
 
 ## Sets the icon texture for this achievement.[br]
 ## [br]
-## [param value]: The new achievement icon texture.
-func set_icon(value: Texture2D) -> void:
-	_data[_key.ICON] = value
+## [param p_icon]: The new achievement icon texture.
+func set_icon(p_icon: Texture2D) -> void:
+	_data[_key.ICON] = p_icon
 	__send_entry_to_manager_viewer()
 
 
@@ -241,7 +243,6 @@ func set_progress_current(p_current: int) -> void:
 	var max_progress: int = _data.get(_key.PROGRESS_MAX, 1)
 	p_current = mini(p_current, max_progress)
 	_data[_key.PROGRESS_CURRENT] = p_current
-	achievement_updated.emit(self)
 	if is_progress_complete() and not is_unlocked():
 		unlock()
 	__send_entry_to_manager_viewer()
@@ -261,7 +262,7 @@ func get_progress_max() -> int:
 
 ## Sets the maximum progress value for this achievement.[br]
 ## [br]
-## [param value]: The new maximum progress value.
+## [param p_new_max]: The new maximum progress value.
 func set_progress_max(p_new_max: int) -> void:
 	_data[_key.PROGRESS_MAX] = p_new_max
 	var current: int = _data.get(_key.PROGRESS_CURRENT, 0)
@@ -271,7 +272,6 @@ func set_progress_max(p_new_max: int) -> void:
 	current = mini(current, p_new_max)
 	if current != 0:
 		_data[_key.PROGRESS_CURRENT] = current
-	achievement_updated.emit(self)
 	if is_progress_complete() and not is_unlocked():
 		unlock()
 	__send_entry_to_manager_viewer()
@@ -288,7 +288,6 @@ func set_progress(p_current: int, p_max: int) -> void:
 	p_current = mini(p_current, p_max)
 	_data[_key.PROGRESS_CURRENT] = p_current
 	_data[_key.PROGRESS_MAX] = p_max
-	achievement_updated.emit(self)
 	if is_progress_complete() and not is_unlocked():
 		unlock()
 	__send_entry_to_manager_viewer()
@@ -299,12 +298,7 @@ func set_progress(p_current: int, p_max: int) -> void:
 ## [param p_amount]: The amount to add to the progress.
 func add_progress(p_amount: int = 1) -> void:
 	var current: int = get_progress_current()
-	var max_progress: int = get_progress_max()
-	if OS.is_debug_build():
-		if current > max_progress:
-			push_warning("AchievementEntry: current achievement progress should be less or equal to the max possible progress. Automatically fixing.")
-	current = mini(current + p_amount, max_progress)
-	set_progress_current(current)
+	set_progress_current(current + p_amount)
 
 
 ## Checks if the achievement progress is complete (current >= max).[br]
@@ -397,7 +391,6 @@ func get_manager() -> AchievementsManager:
 func unlock() -> void:
 	if is_unlocked():
 		return
-
 	set_unlocked(true)
 
 
@@ -411,7 +404,7 @@ func get_data() -> Dictionary:
 ## Emits [signal achievement_updated] to notify that achievement data has been updated.[br]
 ## [br]
 ## Call this after modifying achievement properties (e.g., name, description, icon, or metadata) to signal
-## that the achievement should be refreshed in UI or other systems, even if the unlock state hasn't changed.
+## that the achievement should be refreshed in UI or other systems.
 func set_updated() -> void:
 	achievement_updated.emit(self)
 

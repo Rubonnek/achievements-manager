@@ -438,12 +438,12 @@ func get_data() -> Array[Dictionary]:
 ## [param p_data]: Array of achievement dictionaries to load. Expects the data from [method get_data].
 func set_data(p_data: Array[Dictionary]) -> void:
 	_achievements = p_data
-	_achievement_entries.clear()
+	_achievement_entries.resize(_achievements.size())
 
 	for achievement_id: int in p_data.size():
 		var achievement_data: Dictionary = p_data[achievement_id]
 		var achievement_entry: AchievementEntry = AchievementEntry.new(achievement_id, achievement_data, self)
-		_achievement_entries.push_back(achievement_entry)
+		_achievement_entries[achievement_id] = achievement_entry
 
 	if EngineDebugger.is_active():
 		EngineDebugger.send_message("achievements_manager:set_data", [get_instance_id(), p_data])

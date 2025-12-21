@@ -364,16 +364,6 @@ func get_manager_ref() -> WeakRef:
 	return _manager_ref
 
 
-## Sets the weak reference to the achievements manager.[br]
-## [br]
-## [param p_manager]: Reference to the AchievementsManager instance.
-func set_manager_ref(p_manager: AchievementsManager) -> void:
-	if p_manager:
-		_manager_ref = weakref(p_manager)
-	else:
-		_manager_ref = null
-
-
 ## Gets the achievements manager instance if still valid.[br]
 ## [br]
 ## [b]Returns:[/b] The AchievementsManager instance, or [code]null[/code] if invalid.

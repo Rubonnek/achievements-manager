@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8x4m5n7qaq1"]
+
+[ext_resource type="Script" path="res://demos/4. save and load achievements/save_load_achievements.gd" id="1_save_load"]
+
+[node name="SaveLoadAchievements" type="Node" node_paths=PackedStringArray("status_label")]
+script = ExtResource("1_save_load")
+status_label = NodePath("SaveLoadVBoxContainer/StatusLabel")
+
+[node name="SaveLoadVBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InstructionsLabel" type="Label" parent="SaveLoadVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Press S to save achievements, L to load, U to unlock a random achievement"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="SaveLoadVBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_alignment = 1
+vertical_alignment = 1

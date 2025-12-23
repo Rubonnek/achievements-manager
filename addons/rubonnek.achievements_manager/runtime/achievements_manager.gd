@@ -352,7 +352,7 @@ func get_all_achievement_entries() -> Array[AchievementEntry]:
 ## [br]
 ## [b]Returns:[/b] Array of all registered achievement IDs (array indices).
 func get_all_achievement_ids() -> Array[int]:
-	return range(_achievements.size())
+	return Array(range(_achievements.size()), TYPE_INT, "", null)
 
 
 ## Gets the number of unlocked achievements.[br]

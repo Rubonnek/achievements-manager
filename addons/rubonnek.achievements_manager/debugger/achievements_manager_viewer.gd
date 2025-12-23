@@ -270,7 +270,6 @@ func __refresh_achievement_entries() -> void:
 
 		# Install the achievement icon:
 		var texture : Texture2D = achievement_entry.get_icon()
-		print(achievement_entry.get_icon())
 		if is_instance_valid(texture):
 			achievement_tree_item.set_icon(column, texture)
 

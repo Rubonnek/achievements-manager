@@ -396,6 +396,9 @@ func __send_entry_to_manager_viewer() -> void:
 	if EngineDebugger.is_active():
 		var manager: AchievementsManager = get_manager()
 		if not is_instance_valid(manager):
+			push_error("AchievementEntry: manager instance is invalid. Could not synchronize entry change.")
+			return
+		if manager.has_meta(&"deregistered"):
 			return
 
 		# Duplicate the achievement data to avoid modifying the runtime data

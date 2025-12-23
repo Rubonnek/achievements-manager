@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/rubonnek.achievements_manager/debugger/achievements_manager_viewer.gd" id="1_viewer"]
 [ext_resource type="StyleBox" uid="uid://c6ip1x7jighlg" path="res://addons/rubonnek.achievements_manager/debugger/tree_panel_style_box_flat.tres" id="2_oavdd"]
 
-[node name="AchievementsManager" type="PanelContainer" node_paths=PackedStringArray("achievements_manager_viewer_manager_selection_line_edit_", "achievements_manager_viewer_manager_selection_tree_", "achievements_manager_viewer_achievement_entries_tree_", "achievements_manager_viewer_achievement_entries_view_warning_label_", "achievements_manager_viewer_achievement_data_view_text_edit_", "achievements_manager_viewer_achievement_data_view_warning_label_", "achievements_manager_viewer_achievement_metadata_view_text_edit_", "achievements_manager_viewer_achievement_metadata_view_warning_label_")]
+[node name="Achievements Manager" type="PanelContainer" node_paths=PackedStringArray("achievements_manager_viewer_manager_selection_line_edit_", "achievements_manager_viewer_manager_selection_tree_", "achievements_manager_viewer_achievement_entries_tree_", "achievements_manager_viewer_achievement_entries_view_warning_label_", "achievements_manager_viewer_achievement_data_view_text_edit_", "achievements_manager_viewer_achievement_data_view_warning_label_", "achievements_manager_viewer_achievement_metadata_view_text_edit_", "achievements_manager_viewer_achievement_metadata_view_warning_label_")]
 custom_minimum_size = Vector2(0, 240)
 anchors_preset = 15
 anchor_right = 1.0

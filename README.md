@@ -2,6 +2,9 @@
 
 <img src="icon.svg" width="128" height="128">
 
+![GitHub Release](https://img.shields.io/github/v/release/Rubonnek/achievements-manager?label=Current%20Release)
+![Github Downloads](https://img.shields.io/github/downloads/Rubonnek/achievements-manager/total?logo=github&label=GitHub%20Downloads)
+
 A flexible and efficient achievement system for the Godot Game Engine.
 
 ## :star: Features
@@ -14,6 +17,7 @@ A flexible and efficient achievement system for the Godot Game Engine.
 - :zap: Optimized storage with efficient dictionary-based internal structure
 - :mag: Built-in debugger viewer for real-time achievement monitoring
 - :package: Both low-level optimized accessors and high-level wrapper objects
+- :art: Easy to customize -- bring your own GUI nodes
 
 ## :zap: Requirements
 

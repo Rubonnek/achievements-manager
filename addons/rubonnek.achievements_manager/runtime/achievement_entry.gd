@@ -66,7 +66,7 @@ extends RefCounted
 ## [/codeblock]
 class_name AchievementEntry
 
-## Emitted when the achievement is unlocked through [method set_unlocked].
+## Emitted when [method set_updated] is called.
 signal achievement_unlocked(p_achievement_entry : AchievementEntry)
 
 ## Emitted when [method set_updated] is called.
@@ -178,14 +178,12 @@ func is_unlocked() -> bool:
 
 ## Sets whether this achievement is currently unlocked.[br]
 ## [br]
-## Emits [signal achievement_unlocked] when unlocking an achievement.[br]
-## [br]
 ## [param p_is_unlocked]: [code]true[/code] to unlock, [code]false[/code] to lock.
 func set_unlocked(p_is_unlocked: bool) -> void:
-	if p_is_unlocked:
+	if p_is_unlocked and not _data.get(_key.UNLOCKED, false):
 		_data[_key.UNLOCKED] = true
 		achievement_unlocked.emit(self)
-	else:
+	elif not p_is_unlocked:
 		var _success: bool = _data.erase(_key.UNLOCKED)
 	__send_entry_to_manager_viewer()
 
@@ -243,8 +241,6 @@ func set_progress_current(p_current: int) -> void:
 	var max_progress: int = _data.get(_key.PROGRESS_MAX, 1)
 	p_current = mini(p_current, max_progress)
 	_data[_key.PROGRESS_CURRENT] = p_current
-	if is_progress_complete() and not is_unlocked():
-		unlock()
 	__send_entry_to_manager_viewer()
 
 
@@ -272,8 +268,6 @@ func set_progress_max(p_new_max: int) -> void:
 	current = mini(current, p_new_max)
 	if current != 0:
 		_data[_key.PROGRESS_CURRENT] = current
-	if is_progress_complete() and not is_unlocked():
-		unlock()
 	__send_entry_to_manager_viewer()
 
 
@@ -288,12 +282,10 @@ func set_progress(p_current: int, p_max: int) -> void:
 	p_current = mini(p_current, p_max)
 	_data[_key.PROGRESS_CURRENT] = p_current
 	_data[_key.PROGRESS_MAX] = p_max
-	if is_progress_complete() and not is_unlocked():
-		unlock()
 	__send_entry_to_manager_viewer()
 
 
-## Adds the specified amount to the current progress, without exceeding the maximum.[br]
+## Helper function for progressing an achievement without exceeding the maximum progress.[br]
 ## [br]
 ## [param p_amount]: The amount to add to the progress.
 func add_progress(p_amount: int = 1) -> void:
@@ -322,6 +314,7 @@ func set_metadata(p_key: Variant, p_value: Variant) -> void:
 	if not _data.has(_key.METADATA):
 		_data[_key.METADATA] = metadata
 	__send_entry_to_manager_viewer()
+
 
 ## Gets a metadata value from this achievement.[br]
 ## [br]
@@ -374,10 +367,7 @@ func get_manager() -> AchievementsManager:
 	return null
 
 
-## Unlocks this achievement immediately.[br]
-## [br]
-## If the achievement is already unlocked, this method does nothing.
-## Emits [signal achievement_unlocked].
+## Unlocks the achievement and emits [signal achievement_unlocked] if the achievement is locked. If the achievement is already unlocked, this method does nothing.
 func unlock() -> void:
 	if is_unlocked():
 		return

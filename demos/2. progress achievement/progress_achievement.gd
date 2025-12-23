@@ -18,7 +18,7 @@ func _ready() -> void:
 
 	# Connect to its signals
 	entry.achievement_updated.connect(__on_achievement_updated)
-	entry.achievement_unlocked.connect(_on_achievement_unlocked)
+	entry.achievement_unlocked.connect(__on_achievement_unlocked)
 
 	var target: int = entry.get_progress_max()
 	print("Press SPACE to add progress (current: 0/%d)" % target)
@@ -30,16 +30,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not entry.is_unlocked():
 			entry.add_progress(1)
 
-			# Must emiit the updated signal manually
+			# Must emit the updated signal manually
 			entry.set_updated()
 
-func __on_achievement_updated(achievement: AchievementEntry) -> void:
-	var progress: int = achievement.get_progress_current()
-	var target: int = achievement.get_progress_max()
+func __on_achievement_updated(p_achievement: AchievementEntry) -> void:
+	var progress: int = p_achievement.get_progress_current()
+	var target: int = p_achievement.get_progress_max()
 	print("Progress: %d/%d" % [progress, target])
 	notification_label.set_text("Progress: %d/%d" % [progress, target])
+	if p_achievement.is_progress_complete():
+		p_achievement.unlock()
 
-func _on_achievement_unlocked(achievement: AchievementEntry) -> void:
-	print("🏆 Achievement Unlocked: ", achievement.get_name())
-	print("   ", achievement.get_description())
-	notification_label.set_text("🏆 Achievement Unlocked: " + achievement.get_name() + "\n\nDemo complete!")
+func __on_achievement_unlocked(p_achievement: AchievementEntry) -> void:
+	print("🏆 Achievement Unlocked: ", p_achievement.get_name())
+	print("   ", p_achievement.get_description())
+	notification_label.set_text("🏆 Achievement Unlocked: " + p_achievement.get_name() + "\n\nDemo complete!")

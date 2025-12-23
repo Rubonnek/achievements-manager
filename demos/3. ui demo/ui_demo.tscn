@@ -20,9 +20,9 @@ grow_vertical = 2
 [node name="InstructionsLabel" type="Label" parent="DemoInstructionsAndNotificationVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Press Enter to unlock or progress an achievement.
+text = "Press Space to unlock or progress an achievement.
 
-Press Space to unlock all achievements at once."
+Press Enter to unlock all achievements at once."
 horizontal_alignment = 1
 vertical_alignment = 1
 

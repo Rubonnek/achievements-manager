@@ -48,8 +48,6 @@ func on_achievement_unlocked(p_achievement_entry : AchievementEntry) -> void:
 	var _ignore_property_tweener : PropertyTweener = appear_tween.tween_property(achivement_notification, ^"self_modulate", Color.WHITE, time_to_appear).from(Color.TRANSPARENT)
 	shader_material.set_shader_parameter(&"offset", Vector2(0, 20))
 	_ignore_property_tweener = appear_tween.tween_property(shader_material, ^"shader_parameter/offset", Vector2(0, 0), time_to_appear)
-	# TODO: Report bug? Something is going wrong here in the "from" call -- tween_property also returns null which should return a pointer but the tweening works without the "from"
-	#_ignore_property_tweener = appear_tween.tween_property(shader_material, ^"shader_parameter/offset", Vector2(0, 0), time_to_appear).from(Vector2(0, 20))
 
 	# Store the tween reference so we can cancel it if a new achievement arrives
 	achivement_notification.set_meta(&"appear_tween", appear_tween)
@@ -57,7 +55,6 @@ func on_achievement_unlocked(p_achievement_entry : AchievementEntry) -> void:
 	# Add to queue and scene tree
 	_m_current_notifications_showing.push_back(achivement_notification)
 	add_child(achivement_notification)
-	move_child(achivement_notification, get_parent().get_child_count()-1)
 
 
 	# ====== DISAPPEARANCE ANIMATION START =====

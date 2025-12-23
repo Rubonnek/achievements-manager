@@ -64,29 +64,31 @@ func _ready() -> void:
 	for entry : AchievementEntry in achievements_manager:
 		entry.achievement_unlocked.connect(achievements_notification_ui.on_achievement_unlocked)
 
-	print("Achievement Test: Press ENTER to add progress, SPACE to unlock all")
+	print("Achievement Test: Press SPACE to add progress, ENTER to unlock all")
 	print("Registered %d achievements. Open the debugger to view them!" % achievements_manager.size())
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		var key_event : InputEventKey = event
-		if key_event.pressed and key_event.keycode == KEY_ENTER:
+		if key_event.pressed and key_event.keycode == KEY_SPACE:
 			# Add progress to achievements
-					for entry : AchievementEntry in achievements_manager:
-						if not entry.is_unlocked():
-							entry.add_progress(1)
+			for entry : AchievementEntry in achievements_manager:
+				if not entry.is_unlocked():
+					entry.add_progress(1)
 
-							var current_progress: int = entry.get_progress_current()
-							var target: int = entry.get_progress_max()
+					var current_progress: int = entry.get_progress_current()
+					var target: int = entry.get_progress_max()
 
-							var message : String = "Progress for '%s': %d/%d" % [entry.get_name(), current_progress, target]
-							print(message)
-							demo_notification_label.set_text(message)
+					var message : String = "Progress for '%s': %d/%d" % [entry.get_name(), current_progress, target]
+					print(message)
+					demo_notification_label.set_text(message)
 
-							break
+					if entry.is_progress_complete():
+						entry.unlock()
 
-		elif key_event.pressed and key_event.keycode == KEY_SPACE:
+					break
+		elif key_event.pressed and key_event.keycode == KEY_ENTER:
 			# Unlock all achievements
 			demo_notification_label.set_text("")
 			for entry : AchievementEntry in achievements_manager:

@@ -396,8 +396,8 @@ func get_progress() -> float:
 func reset() -> void:
 	for achievement: Dictionary in _achievements:
 		var _success: bool = achievement.erase(AchievementEntry._key.UNLOCKED)
-		achievement.erase(AchievementEntry._key.METADATA)
-		achievement.erase(AchievementEntry._key.PROGRESS_CURRENT)
+		_success = achievement.erase(AchievementEntry._key.METADATA)
+		_success = achievement.erase(AchievementEntry._key.PROGRESS_CURRENT)
 
 	# Sync all entries with debugger
 	for achievement_entry: AchievementEntry in _achievement_entries:
@@ -416,8 +416,8 @@ func reset_achievement(p_id: int) -> void:
 
 	var achievement: Dictionary = _achievements[p_id]
 	var _success: bool = achievement.erase(AchievementEntry._key.UNLOCKED)
-	achievement.erase(AchievementEntry._key.METADATA)
-	achievement.erase(AchievementEntry._key.PROGRESS_CURRENT)
+	_success = achievement.erase(AchievementEntry._key.METADATA)
+	_success = achievement.erase(AchievementEntry._key.PROGRESS_CURRENT)
 
 	# Sync with debugger
 	var achievement_entry: AchievementEntry = get_achievement_entry(p_id)
@@ -438,7 +438,7 @@ func get_data() -> Array[Dictionary]:
 ## [param p_data]: Array of achievement dictionaries to load. Expects the data from [method get_data].
 func set_data(p_data: Array[Dictionary]) -> void:
 	_achievements = p_data
-	_achievement_entries.resize(_achievements.size())
+	var _new_size : int = _achievement_entries.resize(_achievements.size())
 
 	for achievement_id: int in p_data.size():
 		var achievement_data: Dictionary = p_data[achievement_id]

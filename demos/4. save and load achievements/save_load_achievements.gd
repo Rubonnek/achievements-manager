@@ -1,18 +1,20 @@
 extends Node
 
-@export var status_label : Label
+@export var status_label: Label
 
 var manager := AchievementsManager.new()
 var save_path := "user://achievements_save.cfg"
+
 
 func _ready() -> void:
 	# Add some achievements
 	manager.add_achievement("First Steps", "Take your first steps in the game", "", 1, false)
 	manager.add_achievement("Explorer", "Discover 10 locations", "", 10, false)
-	manager.add_achievement("Master", "Reach level 50", "", 1,true)
+	manager.add_achievement("Master", "Reach level 50", "", 1, true)
 
 	print("Achievements added.")
 	print("Press S to save, L to load, U to unlock an achievement.")
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
@@ -22,6 +24,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			load_achievements()
 		elif event.keycode == KEY_U:
 			unlock_random_achievement()
+
 
 func save_achievements() -> void:
 	var config := ConfigFile.new()
@@ -34,6 +37,7 @@ func save_achievements() -> void:
 		print("Failed to save achievements.")
 		status_label.text = "Save failed!"
 
+
 func load_achievements() -> void:
 	var config := ConfigFile.new()
 	var err := config.load(save_path)
@@ -45,6 +49,7 @@ func load_achievements() -> void:
 	else:
 		print("Failed to load save file.")
 		status_label.text = "Load failed!"
+
 
 func unlock_random_achievement() -> void:
 	var ids := manager.get_all_achievement_ids()

@@ -1,12 +1,13 @@
 extends Node
 
-@export var notification_label : Label
+@export var notification_label: Label
 
 var manager := AchievementsManager.new()
 
+
 func _ready() -> void:
 	# Add a simple achievement
-	var entry : AchievementEntry = manager.add_achievement(
+	var entry: AchievementEntry = manager.add_achievement(
 		"First Blood",
 		"Defeat your first enemy",
 	)
@@ -16,6 +17,7 @@ func _ready() -> void:
 
 	print("Press SPACE to unlock the achievement")
 
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
 		# Unlock the achievement directly from the entry
@@ -24,6 +26,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		# Emit the achievement_updated signal
 		entry.set_updated()
+
 
 func _on_achievement_unlocked(achievement: AchievementEntry) -> void:
 	print("🏆 Achievement Unlocked: ", achievement.get_name())

@@ -25,8 +25,8 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         |
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    |
 #============================================================================
-
 extends RefCounted
+
 class_name AchievementsManager
 ## Manager for tracking and managing player achievements.
 ##
@@ -71,7 +71,6 @@ class_name AchievementsManager
 ## [/codeblock]
 ## [br]
 
-
 # Internal storage for all achievement data including runtime state.[br]
 # Array of dictionaries containing field values indexed by [AchievementEntry._key] enum.[br]
 # The achievement ID is the index in this array.[br]
@@ -87,9 +86,9 @@ var _achievement_entries: Array[AchievementEntry] = []
 func _init() -> void:
 	if EngineDebugger.is_active():
 		# Register with the debugger
-		var current_script : Resource = get_script()
-		var path : String = current_script.get_path()
-		var name : String = get_name()
+		var current_script: Resource = get_script()
+		var path: String = current_script.get_path()
+		var name: String = get_name()
 		EngineDebugger.send_message("achievements_manager:register_manager", [get_instance_id(), name, path])
 
 
@@ -116,11 +115,11 @@ func __is_valid_id(p_id: int) -> bool:
 ## [param p_metadata]: Additional metadata dictionary (optional)[br]
 ## [br]
 ## [b]Returns:[/b] The AchievementEntry for the newly added achievement.
-func add_achievement(p_name: String = "", p_description: String = "", p_string_id: String = "", p_progress_max: int = 1, p_hidden: bool = false, p_icon: Texture2D = null, p_metadata: Dictionary = {}) -> AchievementEntry:
+func add_achievement(p_name: String = "", p_description: String = "", p_string_id: String = "", p_progress_max: int = 1, p_hidden: bool = false, p_icon: Texture2D = null, p_metadata: Dictionary = { }) -> AchievementEntry:
 	assert(p_progress_max >= 1, "AchievementsManager: the achievement's max progress should be one or greater.")
 
 	# Only store non-default values to reduce memory usage
-	var achievement_data: Dictionary = {}
+	var achievement_data: Dictionary = { }
 
 	if not p_name.is_empty():
 		achievement_data[AchievementEntry._key.NAME] = p_name
@@ -137,7 +136,7 @@ func add_achievement(p_name: String = "", p_description: String = "", p_string_i
 	if not p_metadata.is_empty():
 		achievement_data[AchievementEntry._key.METADATA] = p_metadata
 
-	var achievement_id : int = _achievements.size()
+	var achievement_id: int = _achievements.size()
 	_achievements.append(achievement_data)
 
 	# Create and cache the achievement entry
@@ -210,8 +209,6 @@ func get_achievement_description(p_id: int) -> String:
 	return description
 
 
-
-
 ## Checks if an achievement is hidden (optimized accessor).[br]
 ## [br]
 ## [param p_id]: The unique ID of the achievement.[br]
@@ -269,10 +266,10 @@ func get_achievement_icon(p_id: int) -> Texture2D:
 func get_achievement_metadata(p_id: int) -> Dictionary:
 	if not __is_valid_id(p_id):
 		push_error("AchievementsManager: Achievement not registered: " + str(p_id))
-		return {}
+		return { }
 
 	var achievement: Dictionary = _achievements[p_id]
-	var metadata: Dictionary = achievement.get(AchievementEntry._key.METADATA, {})
+	var metadata: Dictionary = achievement.get(AchievementEntry._key.METADATA, { })
 	return metadata
 
 
@@ -438,7 +435,7 @@ func get_data() -> Array[Dictionary]:
 ## [param p_data]: Array of achievement dictionaries to load. Expects the data from [method get_data].
 func set_data(p_data: Array[Dictionary]) -> void:
 	_achievements = p_data
-	var _new_size : int = _achievement_entries.resize(_achievements.size())
+	var _new_size: int = _achievement_entries.resize(_achievements.size())
 
 	for achievement_id: int in p_data.size():
 		var achievement_data: Dictionary = p_data[achievement_id]
@@ -450,7 +447,6 @@ func set_data(p_data: Array[Dictionary]) -> void:
 			EngineDebugger.send_message("achievements_manager:set_data", [get_instance_id(), p_data])
 
 
-
 ## Sets the string IDs for achievements based on the keys of an enum dictionary.[br]
 ## [br]
 ## The string IDs for each achievement will be the enum keys in snake_case format.[br]
@@ -458,7 +454,7 @@ func set_data(p_data: Array[Dictionary]) -> void:
 ## [param p_enum]: Dictionary mapping string IDs to achievement IDs.
 func set_string_ids_using_enum(p_enum: Dictionary) -> void:
 	for string_id: String in p_enum:
-		var snake_case_string_id : String = string_id.to_snake_case()
+		var snake_case_string_id: String = string_id.to_snake_case()
 		var id: int = p_enum[string_id]
 		if not __is_valid_id(id):
 			push_error("AchievementsManager: Invalid achievement ID in enum: " + str(id))
@@ -479,7 +475,7 @@ func prettify() -> Array[Dictionary]:
 
 	for achievement_id: int in _achievements.size():
 		var achievement: Dictionary = _achievements[achievement_id]
-		var prettified_entry: Dictionary = {}
+		var prettified_entry: Dictionary = { }
 
 		prettified_entry["id"] = achievement_id
 
@@ -508,7 +504,7 @@ func prettify() -> Array[Dictionary]:
 
 
 ## Sets a name to the manager in debug builds only. The manager name is only used for display by the achievements manager viewer in the debugger.
-func set_name(p_name : String) -> void:
+func set_name(p_name: String) -> void:
 	if OS.is_debug_build():
 		set_meta(&"name", p_name)
 	if EngineDebugger.is_active():
@@ -529,7 +525,7 @@ func deregister() -> void:
 
 
 # Injects an achievement dictionary given an achievement ID. This is used in the debugger to synchronize AchievementEntries.
-func __inject(p_achievement_id : int, p_achievement_dictionary : Dictionary) -> void:
+func __inject(p_achievement_id: int, p_achievement_dictionary: Dictionary) -> void:
 	if _achievements.size() <= p_achievement_id:
 		if _achievements.resize(p_achievement_id + 1) != OK:
 			push_warning("AchievementsManager: Unable to inject achievement data array! The array won't be visualized properly.")
@@ -545,18 +541,20 @@ func __inject(p_achievement_id : int, p_achievement_dictionary : Dictionary) -> 
 func _to_string() -> String:
 	return "<AchievementsManager#%d>" % get_instance_id()
 
-
 # ==== ITERATOR ====
 # Iterates over all achievement entries
 var _m_iter_needle: int = 0
+
 
 func _iter_init(_p_args: Array) -> bool:
 	_m_iter_needle = 0
 	return _m_iter_needle < _achievement_entries.size()
 
+
 func _iter_next(_p_args: Array) -> bool:
 	_m_iter_needle += 1
 	return _m_iter_needle < _achievement_entries.size()
+
 
 func _iter_get(_p_args: Variant) -> AchievementEntry:
 	return _achievement_entries[_m_iter_needle]

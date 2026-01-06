@@ -25,8 +25,8 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         |
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    |
 #============================================================================
-
 extends RefCounted
+
 ## High-level wrapper for accessing and modifying achievement data.
 ##
 ## This class provides a convenient object-oriented interface for working with individual achievements
@@ -67,25 +67,24 @@ extends RefCounted
 class_name AchievementEntry
 
 ## Emitted when [method set_updated] is called.
-signal achievement_unlocked(p_achievement_entry : AchievementEntry)
+signal achievement_unlocked(p_achievement_entry: AchievementEntry)
 
 ## Emitted when [method set_updated] is called.
-signal achievement_updated(p_achievement_entry : AchievementEntry)
-
+signal achievement_updated(p_achievement_entry: AchievementEntry)
 
 # Enum representing the field indices for achievement data storage.[br]
 # Used by [AchievementsManager] to efficiently store and retrieve achievement properties.[br]
 # [b]Note:[/b] ID is not stored in the dictionary - it's the array index in AchievementsManager.
 enum _key {
-	NAME,        # Display name of the achievement
+	NAME, # Display name of the achievement
 	DESCRIPTION, # Achievement description
-	HIDDEN,      # Whether the achievement should be hidden until unlocked
-	UNLOCKED,    # Whether the achievement is unlocked (runtime state)
-	STRING_ID,   # String identifier for interfacing with external achievement systems
-	ICON,        # Icon texture for the achievement
+	HIDDEN, # Whether the achievement should be hidden until unlocked
+	UNLOCKED, # Whether the achievement is unlocked (runtime state)
+	STRING_ID, # String identifier for interfacing with external achievement systems
+	ICON, # Icon texture for the achievement
 	PROGRESS_CURRENT, # Current progress value
-	PROGRESS_MAX,     # Maximum progress value
-	METADATA     # Additional arbitrary metadata storage
+	PROGRESS_MAX, # Maximum progress value
+	METADATA, # Additional arbitrary metadata storage
 }
 
 # Reference to the internal dictionary storing achievement data.
@@ -187,6 +186,7 @@ func set_unlocked(p_is_unlocked: bool) -> void:
 		var _success: bool = _data.erase(_key.UNLOCKED)
 	__send_entry_to_manager_viewer()
 
+
 ## Gets the string identifier for this achievement.[br]
 ## [br]
 ## Used for interfacing with external achievement systems (e.g., Steam, Epic Games).[br]
@@ -205,6 +205,7 @@ func get_string_id() -> String:
 func set_string_id(p_string_id: String) -> void:
 	_data[_key.STRING_ID] = p_string_id
 	__send_entry_to_manager_viewer()
+
 
 ## Gets the icon texture for this achievement.[br]
 ## [br]
@@ -309,7 +310,7 @@ func is_progress_complete() -> bool:
 ## [param p_key]: The metadata key.[br]
 ## [param p_value]: The metadata value.
 func set_metadata(p_key: Variant, p_value: Variant) -> void:
-	var metadata: Dictionary = _data.get(_key.METADATA, {})
+	var metadata: Dictionary = _data.get(_key.METADATA, { })
 	metadata[p_key] = p_value
 	if not _data.has(_key.METADATA):
 		_data[_key.METADATA] = metadata
@@ -323,7 +324,7 @@ func set_metadata(p_key: Variant, p_value: Variant) -> void:
 ## [br]
 ## [b]Returns:[/b] The metadata value, or the default value if not found.
 func get_metadata(p_key: Variant, p_default_value: Variant = null) -> Variant:
-	var metadata: Dictionary = _data.get(_key.METADATA, {})
+	var metadata: Dictionary = _data.get(_key.METADATA, { })
 	var value: Variant = metadata.get(p_key, p_default_value)
 	return value
 
@@ -334,7 +335,7 @@ func get_metadata(p_key: Variant, p_default_value: Variant = null) -> Variant:
 ## [br]
 ## [color=yellow]Warning:[/color] Returns a reference to the internal dictionary. Modifying it will modify the metadata directly.
 func get_metadata_data() -> Dictionary:
-	var metadata: Dictionary = _data.get(_key.METADATA, {})
+	var metadata: Dictionary = _data.get(_key.METADATA, { })
 	if not _data.has(_key.METADATA):
 		# Store a reference so external modifications update the entry automatically
 		_data[_key.METADATA] = metadata
@@ -345,7 +346,7 @@ func get_metadata_data() -> Dictionary:
 ## [br]
 ## [b]Returns:[/b] [code]true[/code] if metadata exists and is not empty, [code]false[/code] otherwise.
 func has_metadata() -> bool:
-	var metadata: Dictionary = _data.get(_key.METADATA, {})
+	var metadata: Dictionary = _data.get(_key.METADATA, { })
 	var has_data: bool = not metadata.is_empty()
 	return has_data
 
@@ -406,14 +407,14 @@ func __send_entry_to_manager_viewer() -> void:
 
 		# Convert the image into an object that we can send into the debugger
 		if duplicated_achievement_data.has(AchievementEntry._key.ICON):
-			var texture : Texture2D = duplicated_achievement_data[AchievementEntry._key.ICON]
-			var image : Image = texture.get_image()
+			var texture: Texture2D = duplicated_achievement_data[AchievementEntry._key.ICON]
+			var image: Image = texture.get_image()
 			duplicated_achievement_data[AchievementEntry._key.ICON] = var_to_bytes_with_objects(image)
 
 		# Stringify metadata keys and values where needed for display
-		var metadata: Dictionary = _data.get(_key.METADATA, {})
+		var metadata: Dictionary = _data.get(_key.METADATA, { })
 		if not metadata.is_empty():
-			var stringified_metadata: Dictionary = {}
+			var stringified_metadata: Dictionary = { }
 			for key: Variant in metadata:
 				var value: Variant = metadata[key]
 				if key is Callable or key is Object:

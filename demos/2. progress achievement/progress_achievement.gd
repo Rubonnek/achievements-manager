@@ -1,19 +1,20 @@
 extends Node
 
-@export var notification_label : Label
+@export var notification_label: Label
 
 var manager := AchievementsManager.new()
 
+
 func _ready() -> void:
 	# Add a progress achievement
-	var entry : AchievementEntry = manager.add_achievement(
+	var entry: AchievementEntry = manager.add_achievement(
 		"Skilled Hunter",
 		"Defeat 10 enemies",
 		"",
 		10,
 		false,
 		null,
-		{}
+		{ },
 	)
 
 	# Connect to its signals
@@ -22,6 +23,7 @@ func _ready() -> void:
 
 	var target: int = entry.get_progress_max()
 	print("Press SPACE to add progress (current: 0/%d)" % target)
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_SPACE:
@@ -33,6 +35,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			# Must emit the updated signal manually
 			entry.set_updated()
 
+
 func __on_achievement_updated(p_achievement: AchievementEntry) -> void:
 	var progress: int = p_achievement.get_progress_current()
 	var target: int = p_achievement.get_progress_max()
@@ -40,6 +43,7 @@ func __on_achievement_updated(p_achievement: AchievementEntry) -> void:
 	notification_label.set_text("Progress: %d/%d" % [progress, target])
 	if p_achievement.is_progress_complete():
 		p_achievement.unlock()
+
 
 func __on_achievement_unlocked(p_achievement: AchievementEntry) -> void:
 	print("🏆 Achievement Unlocked: ", p_achievement.get_name())

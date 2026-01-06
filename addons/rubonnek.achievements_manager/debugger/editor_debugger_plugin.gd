@@ -29,18 +29,17 @@
 @tool
 extends EditorDebuggerPlugin
 
+var session_id_to_achievements_manager_viewer: Dictionary = { }
 
-var session_id_to_achievements_manager_viewer : Dictionary = {}
 
-
-func _setup_session(p_session_id : int) -> void:
+func _setup_session(p_session_id: int) -> void:
 	# Instantiate the achievements manager viewer and grab the debugger session
-	var achievements_manager_viewer : Control = preload("./achievements_manager_viewer.tscn").instantiate()
-	var editor_debugger_session : EditorDebuggerSession = get_session(p_session_id)
+	var achievements_manager_viewer: Control = preload("./achievements_manager_viewer.tscn").instantiate()
+	var editor_debugger_session: EditorDebuggerSession = get_session(p_session_id)
 
 	# Listen to the debugger session started signal.
 	@warning_ignore("unsafe_property_access", "unsafe_call_argument")
-	var _success : int = editor_debugger_session.started.connect(achievements_manager_viewer.__on_session_started)
+	var _success: int = editor_debugger_session.started.connect(achievements_manager_viewer.__on_session_started)
 	@warning_ignore("unsafe_property_access", "unsafe_call_argument")
 	_success = editor_debugger_session.stopped.connect(achievements_manager_viewer.__on_session_stopped)
 
@@ -51,11 +50,11 @@ func _setup_session(p_session_id : int) -> void:
 	session_id_to_achievements_manager_viewer[p_session_id] = achievements_manager_viewer
 
 
-func _has_capture(p_prefix : String) -> bool:
+func _has_capture(p_prefix: String) -> bool:
 	return p_prefix == "achievements_manager"
 
 
-func _capture(p_message : String, p_data : Array, p_session_id : int) -> bool:
-	var achievements_manager_viewer : Control = session_id_to_achievements_manager_viewer[p_session_id]
+func _capture(p_message: String, p_data: Array, p_session_id: int) -> bool:
+	var achievements_manager_viewer: Control = session_id_to_achievements_manager_viewer[p_session_id]
 	@warning_ignore("unsafe_method_access")
 	return achievements_manager_viewer.on_editor_debugger_plugin_capture(p_message, p_data)

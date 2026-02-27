@@ -335,7 +335,7 @@ func get_achievement_entry(p_id: int) -> AchievementEntry:
 
 ## Returns true if an achievement ID is present.
 func has_achievement(p_id: int) -> bool:
-	return p_id < _achievements.size()
+	return p_id >= 0 and p_id < _achievements.size()
 
 
 ## Gets all achievements as an array of [AchievementEntry] objects.[br]

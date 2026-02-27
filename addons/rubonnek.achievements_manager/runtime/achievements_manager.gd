@@ -55,6 +55,7 @@ class_name AchievementsManager
 ##     "First Steps",
 ##     "Complete the tutorial",
 ##     "",     # string_id
+##     1,      # progress_max
 ##     false,  # not hidden
 ##     null,   # icon
 ##     metadata
@@ -109,7 +110,7 @@ func __is_valid_id(p_id: int) -> bool:
 ## [param p_name]: Display name (optional)[br]
 ## [param p_description]: Description text (optional)[br]
 ## [param p_string_id]: String identifier for external achievement systems (optional)[br]
-## [param p_progress_max]: Maximum progress value for the achievement (optional, default: 0)[br]
+## [param p_progress_max]: Maximum progress value for the achievement (optional, default: 1)[br]
 ## [param p_hidden]: Whether to hide until unlocked (default: false)[br]
 ## [param p_icon]: Icon texture for the achievement (optional)[br]
 ## [param p_metadata]: Additional metadata dictionary (optional)[br]
@@ -467,7 +468,7 @@ func set_string_ids_using_enum(p_enum: Dictionary) -> void:
 ## [b]Example[/b]:
 ## [codeblock]
 ## var achievements_manager : AchievementsManager = AchievementsManager.new()
-## achievements_manager.add_achievement("First Achievement", "Complete the tutorial", "", true)
+## achievements_manager.add_achievement("First Achievement", "Complete the tutorial", "", 1, true)
 ## print(JSON.stringify(achievements_manager.prettify(), "\t"))
 ## [/codeblock]
 func prettify() -> Array[Dictionary]:

@@ -265,7 +265,7 @@ func set_progress_max(p_new_max: int) -> void:
 	var current: int = _data.get(_key.PROGRESS_CURRENT, 0)
 	if OS.is_debug_build():
 		if current > p_new_max:
-			push_warning("AchievementEntry: new max progress value is greater than current progress value. Achievement will be unlocked automatically and current value will be clamped. Was this intended?")
+			push_warning("AchievementEntry: new max progress value is less than current progress value. Achievement will be unlocked automatically and current value will be clamped. Was this intended?")
 	current = mini(current, p_new_max)
 	if current != 0:
 		_data[_key.PROGRESS_CURRENT] = current

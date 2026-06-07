@@ -16,7 +16,6 @@ A flexible and efficient achievement system for the Godot Game Engine.
 - :bell: Signal-based notifications for unlock and progress update events
 - :zap: Optimized storage with efficient dictionary-based internal structure
 - :mag: Built-in debugger viewer for real-time achievement monitoring
-- :package: Both low-level optimized accessors and high-level wrapper objects
 - :art: Easy to customize -- bring your own GUI nodes
 
 ## :zap: Requirements
